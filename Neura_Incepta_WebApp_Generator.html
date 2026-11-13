@@ -1,0 +1,1805 @@
+<!DOCTYPE html>
+<html lang="id" data-base="light" data-accent="neru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Neura Incepta</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    // Pasang tema SEBELUM CSS digambar, supaya nggak ada kedipan.
+    // Kalau belum pernah pilih tema, ikuti mode terang/gelap perangkat.
+    (function () {
+      var base = null, accent = null;
+      try {
+        base = localStorage.getItem("neura-theme-base");
+        accent = localStorage.getItem("neura-theme-accent");
+      } catch (e) {}
+      if (!base) base = "light";
+      document.documentElement.setAttribute("data-base", base);
+      document.documentElement.setAttribute("data-accent", accent || "neru");
+    })();
+  </script>
+
+  <style>
+
+    /* =========================================================
+       NEURA INCEPTA — EDITORIAL UI
+       Lapisan visual saja. Struktur dan logika JavaScript tetap.
+       ========================================================= */
+    :root {
+      --in-color: #2e9b68;
+      --out-color: #c65b55;
+      --accent-primary: #b49a42;
+      --accent-bright: #c7ad58;
+      --accent-secondary: #e8ddb5;
+      --accent-shadow: #8b7634;
+      --accent-particle: #d9cfaa;
+      --accent-text-light: #806b2d;
+      --page-bg: #f8f8f6;
+      --surface: #ffffff;
+      --surface-soft: #f1f1ee;
+      --text: #292a28;
+      --muted: #777873;
+      --muted-soft: #999a94;
+      --border: #e5e5df;
+      --shadow: 0 8px 28px rgba(34, 35, 31, .045);
+      --on-accent: #24231d;
+      --on-accent-shadow: none;
+      box-sizing: border-box;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    [data-base="light"] {
+      --bg-dark: #f8f8f6;
+      --surface-deep: #ffffff;
+      --bg-items: #f1f1ee;
+      --text-light: #292a28;
+      --btn-gray: #f2f2ef;
+      --border-line: #e5e5df;
+      --muted-gray: #777873;
+      --light-gray: #62635e;
+      --shadow-color: rgba(34, 35, 31, .045);
+      --overlay-shine: rgba(255,255,255,.72);
+      --on-accent-color: #24231d;
+      --on-accent-shadow: none;
+      --accent-text: var(--accent-text-light);
+    }
+    [data-base="dark"] {
+      --bg-dark: #171816;
+      --surface-deep: #20211e;
+      --bg-items: #2a2b27;
+      --text-light: #efefe9;
+      --btn-gray: #292a26;
+      --border-line: #3a3b35;
+      --muted-gray: #a0a198;
+      --light-gray: #c6c7be;
+      --shadow-color: rgba(0,0,0,.2);
+      --overlay-shine: rgba(255,255,255,.12);
+      --on-accent-color: #24231d;
+      --on-accent-shadow: none;
+      --accent-text: var(--accent-primary);
+    }
+    [data-accent="neru"] {
+      --accent-primary: #c1a64b;
+      --accent-bright: #d1b95f;
+      --accent-secondary: #e9dfbd;
+      --accent-shadow: #9a8135;
+      --accent-particle: #d8c98e;
+      --accent-text-light: #806b2d;
+    }
+    [data-accent="sekai"] {
+      --accent-primary: #83aebd;
+      --accent-bright: #a6c7d0;
+      --accent-secondary: #dcebef;
+      --accent-shadow: #5f8998;
+      --accent-particle: #c4dce2;
+      --accent-text-light: #527b89;
+    }
+
+    html { scroll-padding-top: 90px; }
+    html, body { margin: 0; min-height: 100%; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    * { box-sizing: border-box; }
+    body {
+      font-family: "DM Sans", Inter, system-ui, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-light);
+      line-height: 1.6;
+      transition: background-color .2s ease, color .2s ease;
+    }
+    :focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 3px; }
+    button, input, textarea { font: inherit; }
+    button { -webkit-tap-highlight-color: transparent; }
+
+    /* Header */
+    .header-container {
+      position: relative;
+      overflow: hidden;
+      min-height: 174px;
+      padding: 48px 20px 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-dark);
+      border-bottom: 1px solid var(--border-line);
+    }
+    .header-container::before {
+      content: "";
+      position: absolute;
+      width: 190px; height: 190px;
+      right: calc(50% - 360px); top: -115px;
+      border: 1px solid var(--accent-secondary);
+      border-radius: 50%;
+      opacity: .48;
+      pointer-events: none;
+    }
+    .header-container::after {
+      content: "";
+      position: absolute;
+      width: 130px; height: 130px;
+      left: calc(50% - 360px); bottom: -95px;
+      border: 1px solid var(--accent-secondary);
+      border-radius: 50%;
+      opacity: .38;
+      pointer-events: none;
+    }
+    .header-content { position: relative; text-align: center; z-index: 2; }
+    .header-content h1 {
+      margin: 0;
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: clamp(2rem, 5vw, 2.65rem);
+      line-height: 1.15;
+      font-weight: 600;
+      letter-spacing: -.8px;
+      color: var(--text-light);
+      text-shadow: none;
+    }
+    #greet {
+      display: inline-block;
+      margin-top: 13px;
+      padding: 5px 13px;
+      border: 1px solid var(--border-line);
+      border-radius: 999px;
+      color: var(--muted-gray);
+      background: var(--surface-deep);
+      font-size: .82rem;
+      font-weight: 500;
+      text-shadow: none;
+    }
+    .triangle { display: none; }
+
+    /* Navigation */
+    body::before {
+      content: "";
+      position: fixed; top: 0; left: 0; right: 0; z-index: 99;
+      height: env(safe-area-inset-top, 0px);
+      background: var(--surface-deep);
+    }
+    .category-nav {
+      display: flex;
+      position: sticky;
+      top: env(safe-area-inset-top, 0px);
+      z-index: 100;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 16px;
+      background: color-mix(in srgb, var(--surface-deep) 94%, transparent);
+      border-bottom: 1px solid var(--border-line);
+      backdrop-filter: blur(12px);
+    }
+    .nav-item {
+      min-width: 138px;
+      padding: 10px 17px;
+      text-align: center;
+      cursor: pointer;
+      font: 600 .84rem "DM Sans", sans-serif;
+      letter-spacing: .1px;
+      color: var(--muted-gray);
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      transition: color .18s ease, background .18s ease, border-color .18s ease;
+    }
+    .nav-item.active {
+      color: var(--text-light);
+      background: var(--bg-items);
+      border-color: var(--border-line);
+    }
+
+    /* Main layout and cards */
+    .page { width: min(100%, 1480px); margin: 0 auto; padding: 28px 22px 64px; }
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr);
+      align-items: start;
+      gap: 22px;
+    }
+    #tab-form, #tab-result { min-width: 0; }
+    .card {
+      margin: 15px 18px;
+      padding: 25px 27px;
+      border: 1px solid var(--border-line);
+      border-radius: 16px;
+      background: var(--surface-deep);
+      box-shadow: var(--shadow);
+    }
+    .card.accent { border-top: 1px solid var(--border-line); }
+    .card h2 {
+      margin: 0 0 19px;
+      color: var(--text-light);
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: 1.28rem;
+      font-weight: 600;
+      letter-spacing: -.2px;
+      line-height: 1.3;
+    }
+    #formArea > .card:first-child { margin-top: 15px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 17px; }
+    .full { grid-column: 1 / -1; }
+    @media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
+
+    /* Inputs */
+    .input-group { min-width: 0; margin-bottom: 19px; }
+    label {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--muted-gray);
+      font-size: .76rem;
+      font-weight: 700;
+      letter-spacing: .55px;
+      text-transform: uppercase;
+    }
+    label .req { color: var(--out-color); }
+    input[type=text], textarea, select {
+      width: 100%;
+      min-height: 46px;
+      padding: 11px 13px;
+      border: 1px solid var(--border-line);
+      border-radius: 9px;
+      background: var(--surface-deep);
+      color: var(--text-light);
+      font: 500 .94rem "DM Sans", sans-serif;
+      box-shadow: none;
+      transition: border-color .18s ease, box-shadow .18s ease;
+    }
+    input[type=text]::placeholder, textarea::placeholder { color: var(--muted-soft); opacity: 1; }
+    textarea { min-height: 96px; resize: vertical; line-height: 1.55; }
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-primary) 14%, transparent);
+    }
+    .check-row {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      margin-bottom: 17px;
+      color: var(--text-light);
+      font-size: .92rem;
+      font-weight: 500;
+    }
+    .check-row input { width: 17px; height: 17px; accent-color: var(--accent-shadow); }
+    .check-row label { margin: 0; color: inherit; font-size: .9rem; font-weight: 500; letter-spacing: 0; text-transform: none; }
+
+    /* Chips */
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 13px; }
+    .chip {
+      padding: 8px 13px;
+      border: 1px solid var(--border-line);
+      border-radius: 999px;
+      background: var(--surface-deep);
+      color: var(--muted-gray);
+      cursor: pointer;
+      font: 500 .84rem "DM Sans", sans-serif;
+      transition: background .18s ease, border-color .18s ease, color .18s ease;
+    }
+    .chip[aria-pressed="true"] {
+      background: color-mix(in srgb, var(--accent-primary) 15%, var(--surface-deep));
+      border-color: var(--accent-primary);
+      color: var(--text-light);
+    }
+
+    /* Custom dropdown */
+    .dd { position: relative; }
+    .dd-btn {
+      position: relative;
+      width: 100%;
+      min-height: 46px;
+      padding: 11px 40px 11px 13px;
+      text-align: left;
+      cursor: pointer;
+      border: 1px solid var(--border-line);
+      border-radius: 9px;
+      background: var(--surface-deep);
+      color: var(--text-light);
+      font: 500 .94rem "DM Sans", sans-serif;
+    }
+    .dd-btn::after {
+      content: "";
+      position: absolute; right: 16px; top: 47%;
+      width: 7px; height: 7px;
+      border-right: 1.5px solid var(--muted-gray);
+      border-bottom: 1.5px solid var(--muted-gray);
+      transform: translateY(-70%) rotate(45deg);
+      transition: transform .18s ease;
+    }
+    .dd.open .dd-btn { border-color: var(--accent-primary); }
+    .dd.open .dd-btn::after { transform: translateY(-25%) rotate(225deg); }
+    .dd-panel {
+      display: none;
+      position: absolute; left: 0; right: 0; z-index: 50;
+      margin-top: 5px;
+      max-height: 230px;
+      overflow-y: auto;
+      border: 1px solid var(--border-line);
+      border-radius: 10px;
+      background: var(--surface-deep);
+      box-shadow: 0 12px 28px var(--shadow-color);
+    }
+    .dd.open .dd-panel { display: block; }
+    .dd-item {
+      padding: 11px 14px;
+      cursor: pointer;
+      border-bottom: 1px solid var(--border-line);
+      color: var(--light-gray);
+      font-size: .9rem;
+      font-weight: 500;
+    }
+    .dd-item:last-child { border-bottom: 0; }
+    .dd-item:hover, .dd-item:focus { background: var(--bg-items); color: var(--text-light); outline: none; }
+    .dd-item.selected { color: var(--accent-text); font-weight: 700; }
+
+    /* Persona and mode selector */
+    .type-selector {
+      position: relative;
+      display: flex;
+      padding: 4px;
+      overflow: hidden;
+      border: 1px solid var(--border-line);
+      border-radius: 999px;
+      background: var(--bg-items);
+    }
+    .type-btn {
+      flex: 1;
+      min-width: 0;
+      padding: 12px 10px;
+      z-index: 2;
+      cursor: pointer;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      font: 700 .82rem "DM Sans", sans-serif;
+      letter-spacing: .25px;
+      color: var(--muted-gray);
+      transition: color .2s ease;
+    }
+    .type-btn.active { color: var(--on-accent-color); text-shadow: none; }
+    .selection-indicator {
+      position: absolute; top: 4px; left: 4px; z-index: 1;
+      width: calc(50% - 4px); height: calc(100% - 8px);
+      border-radius: 999px;
+      background: var(--accent-primary);
+      transition: transform .25s ease;
+    }
+    .selection-indicator.right { transform: translateX(100%); }
+    /* Selector kategori: jumlah segmen dihitung JavaScript dari daftar CATEGORIES */
+    .cat-selector .type-btn { padding: 12px 6px; line-height: 1.25; }
+
+    /* Buttons */
+    .submit-btn {
+      width: 100%;
+      min-height: 51px;
+      padding: 14px 20px;
+      margin-top: 6px;
+      cursor: pointer;
+      border: 1px solid var(--accent-primary);
+      border-radius: 999px;
+      background: var(--accent-primary);
+      color: #24231d;
+      font: 700 .91rem "DM Sans", sans-serif;
+      letter-spacing: .25px;
+      text-transform: none;
+      text-shadow: none;
+      box-shadow: none;
+      transition: transform .18s ease, filter .18s ease;
+    }
+    .submit-btn:hover { filter: brightness(.97); transform: translateY(-1px); }
+    .submit-btn:active { transform: translateY(0); }
+    .ghost-btn {
+      width: 100%;
+      padding: 11px 15px;
+      margin-top: 11px;
+      cursor: pointer;
+      border: 1px solid var(--border-line);
+      border-radius: 999px;
+      background: transparent;
+      color: var(--muted-gray);
+      font: 600 .86rem "DM Sans", sans-serif;
+      transition: background .18s ease, color .18s ease;
+    }
+    .ghost-btn:hover { background: var(--bg-items); color: var(--text-light); }
+    #msg { min-height: 1.4em; margin: 12px 0 0; color: var(--out-color); font-size: .88rem; font-weight: 600; text-align: center; }
+
+    textarea.code {
+      min-height: 190px;
+      font: 12px/1.55 ui-monospace, Consolas, monospace;
+    }
+    .file-btn {
+      display: inline-flex;
+      align-items: center;
+      margin-top: 9px;
+      padding: 8px 13px;
+      border: 1px solid var(--border-line);
+      border-radius: 999px;
+      background: var(--bg-items);
+      color: var(--text-light);
+      cursor: pointer;
+      font: 600 .82rem "DM Sans", sans-serif;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    /* Generated prompt */
+    #warn {
+      margin: 0 0 16px;
+      padding: 13px 15px;
+      border: 1px solid var(--border-line);
+      border-left: 3px solid var(--accent-primary);
+      border-radius: 9px;
+      background: var(--bg-items);
+      font-size: .86rem;
+      font-weight: 600;
+    }
+    #warn:empty { display: none; }
+    #warn ul { margin: 8px 0 0; padding-left: 18px; color: var(--light-gray); font-weight: 400; }
+    pre {
+      margin: 0 0 16px;
+      padding: 17px;
+      max-height: 60vh;
+      overflow: auto;
+      border: 1px solid var(--border-line);
+      border-radius: 10px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      background: var(--bg-items);
+      color: var(--text-light);
+      font: 12.5px/1.65 ui-monospace, Consolas, monospace;
+    }
+
+    /* Theme menu */
+    .theme-menu-btn {
+      position: fixed;
+      top: calc(16px + env(safe-area-inset-top, 0px));
+      left: 16px;
+      z-index: 300;
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      background: var(--surface-deep);
+      border: 1px solid var(--border-line);
+      box-shadow: 0 3px 12px var(--shadow-color);
+    }
+    .theme-menu-btn span { width: 16px; height: 1.5px; border-radius: 2px; background: var(--text-light); }
+    .theme-menu-popup {
+      position: fixed;
+      top: calc(64px + env(safe-area-inset-top, 0px));
+      left: 16px;
+      z-index: 300;
+      min-width: 205px;
+      padding: 15px;
+      border-radius: 13px;
+      background: var(--surface-deep);
+      border: 1px solid var(--border-line);
+      box-shadow: 0 12px 30px var(--shadow-color);
+      opacity: 0;
+      transform: translateY(-7px) scale(.98);
+      pointer-events: none;
+      transition: .18s ease;
+    }
+    .theme-menu-popup.open { opacity: 1; transform: none; pointer-events: auto; }
+    .theme-menu-label {
+      display: block;
+      margin: 13px 0 8px;
+      color: var(--muted-gray);
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: .8px;
+      text-transform: uppercase;
+    }
+    .theme-menu-label:first-child { margin-top: 0; }
+    .theme-menu-options { display: flex; gap: 7px; }
+    .theme-opt-btn {
+      flex: 1;
+      padding: 8px 6px;
+      border: 1px solid var(--border-line);
+      border-radius: 8px;
+      background: var(--bg-items);
+      color: var(--text-light);
+      cursor: pointer;
+      font: 600 .82rem "DM Sans", sans-serif;
+    }
+    .theme-opt-btn.active {
+      background: color-mix(in srgb, var(--accent-primary) 22%, var(--surface-deep));
+      border-color: var(--accent-primary);
+      color: var(--text-light);
+    }
+    .click-particle { position: absolute; z-index: 9999; pointer-events: none; clip-path: polygon(50% 0%, 0% 100%, 100% 100%); opacity: .45; }
+
+    [hidden] { display: none !important; }
+
+    /* Jarak tombol tambah data ke field berikutnya */
+    #entAdd {
+      margin-bottom: 18px;
+    }
+
+    /* Desktop: both work areas stay visible. Smaller screens use the tab bar. */
+    @media (min-width: 901px) {
+      .category-nav { display: none; }
+      .page { padding-top: 30px; }
+      #tab-form > .card:first-child { margin-top: 0; }
+
+      /* Panel hasil fixed dengan kolom yang tetap dicadangkan oleh grid.
+         Saat halaman masih di header, panel mulai tepat di bawah header.
+         Setelah header terlewati, panel naik ke posisi kerja normal. */
+      #tab-result {
+        position: fixed;
+        z-index: 20;
+        top: 204px;
+        right: max(22px, calc((100vw - 1480px) / 2 + 22px));
+        bottom: 24px;
+        width: calc((min(100vw, 1480px) - 66px) * .54);
+        align-self: stretch;
+        min-height: 0;
+        transition: top .18s ease;
+      }
+      body.has-scrolled #tab-result { top: 24px; }
+      #tab-result > .card {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        min-height: 0;
+        max-height: none;
+        margin: 0;
+        overflow: hidden;
+      }
+      #tab-result > .card h2,
+      #tab-result #warn,
+      #tab-result #copy { flex: 0 0 auto; }
+      #tab-result pre {
+        flex: 1 1 auto;
+        min-height: 0;
+        max-height: none;
+        overflow: auto;
+        overscroll-behavior: contain;
+      }
+    }
+    @media (max-width: 900px) {
+      .page { width: min(100%, 800px); padding: 12px 0 56px; }
+      .workspace { display: block; }
+      #tab-result { position: static; }
+      #tab-result .card { max-height: none; overflow: visible; }
+      #tab-result pre { max-height: 65vh; }
+    }
+
+    @media (max-width: 600px) {
+      .header-container { min-height: 150px; padding: 42px 18px 30px; }
+      .header-content h1 { font-size: 1.85rem; }
+      .category-nav { padding: 9px 12px; gap: 5px; }
+      .nav-item { min-width: 0; flex: 1; padding: 9px 10px; font-size: .78rem; }
+      .page { padding-top: 12px; }
+      .card { margin: 12px 12px; padding: 21px 18px; border-radius: 13px; }
+      .card h2 { font-size: 1.18rem; margin-bottom: 16px; }
+      .type-btn { padding: 11px 7px; font-size: .76rem; }
+      .theme-menu-btn { top: calc(10px + env(safe-area-inset-top, 0px)); left: 10px; width: 36px; height: 36px; }
+      .theme-menu-popup { top: calc(54px + env(safe-area-inset-top, 0px)); left: 10px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+
+  
+    /* ===== Tambahan untuk Neura Incepta ===== */
+    .mode-hint { margin: 14px 4px 0; color: var(--muted-gray); font-size: .86rem; line-height: 1.55; }
+    .cat-selector .type-btn, #modeSelector .type-btn { padding: 12px 6px; line-height: 1.25; }
+
+    /* Blok data (entitas) */
+    .entity { margin: 0 0 14px; padding: 14px; border: 1px solid var(--border-line); border-radius: 12px; background: var(--bg-items); }
+    .entity-head { display: flex; gap: 10px; margin-bottom: 10px; }
+    .entity-head input { flex: 1; min-width: 0; }
+    .entity textarea { min-height: 76px; }
+    .mini-btn {
+      flex: 0 0 auto; padding: 0 14px; cursor: pointer;
+      border: 1px solid var(--border-line); border-radius: 9px;
+      background: var(--surface-deep); color: var(--muted-gray);
+      font: 600 .82rem "DM Sans", sans-serif;
+    }
+    .mini-btn:hover:not(:disabled) { color: var(--text-light); border-color: var(--accent-primary); }
+    .mini-btn:disabled { opacity: .45; cursor: default; }
+
+    /* Tab file hasil dan baris tombol */
+    #fileTabs { display: flex; flex-wrap: wrap; gap: 7px; margin: 0 0 14px; flex: 0 0 auto; }
+    #fileTabs:empty { display: none; }
+    .file-tab {
+      padding: 7px 12px; cursor: pointer;
+      border: 1px solid var(--border-line); border-radius: 999px;
+      background: var(--surface-deep); color: var(--muted-gray);
+      font: 600 .78rem "DM Sans", sans-serif;
+    }
+    .file-tab[aria-pressed="true"] {
+      background: color-mix(in srgb, var(--accent-primary) 15%, var(--surface-deep));
+      border-color: var(--accent-primary); color: var(--text-light);
+    }
+    .btn-row { display: flex; flex-wrap: wrap; gap: 10px; flex: 0 0 auto; }
+    .btn-row > * { flex: 1 1 160px; width: auto; margin-top: 0; }
+    .btn-row.spaced { margin-top: 11px; }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- MENU TEMA -->
+  <div class="theme-menu-btn" id="themeBtn" role="button" aria-label="Menu tema" tabindex="0"><span></span><span></span><span></span></div>
+  <div class="theme-menu-popup" id="themePopup">
+    <span class="theme-menu-label">Base Theme</span>
+    <div class="theme-menu-options">
+      <button class="theme-opt-btn" data-base-opt="dark">Dark</button>
+      <button class="theme-opt-btn" data-base-opt="light">Light</button>
+    </div>
+    <span class="theme-menu-label">Custom Theme</span>
+    <div class="theme-menu-options">
+      <button class="theme-opt-btn" data-accent-opt="neru">Neru</button>
+      <button class="theme-opt-btn" data-accent-opt="sekai">Sekai</button>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <div class="header-container" id="header">
+    <div class="header-content">
+      <h1>NEURA INCEPTA</h1>
+      <div id="greet"></div>
+    </div>
+  </div>
+
+  <!-- TAB (HP dan tablet) -->
+  <div class="category-nav">
+    <button class="nav-item active" data-tab="form">Isi Form</button>
+    <button class="nav-item" data-tab="result">Hasil</button>
+  </div>
+
+  <div class="page">
+    <div class="workspace">
+    <!-- PANEL 1: FORM -->
+    <div id="tab-form">
+      <div class="card accent">
+        <h2>Lagi ngobrol sama siapa?</h2>
+        <div class="type-selector">
+          <div class="selection-indicator" id="indicator"></div>
+          <button class="type-btn" data-persona="neru">NERU</button>
+          <button class="type-btn" data-persona="miku">MIKU</button>
+        </div>
+      </div>
+      <div class="card" id="modeCard">
+        <h2>Lagi di tahap mana?</h2>
+        <div class="type-selector" id="modeSelector">
+          <div class="selection-indicator" id="indicatorMode"></div>
+          <!-- tombol tahap dibuat otomatis oleh JavaScript dari MODES -->
+        </div>
+        <p class="mode-hint" id="modeHint"></p>
+      </div>
+      <div id="formArea"></div>
+      <div class="card">
+        <button class="submit-btn" id="go" type="button">Buat</button>
+        <p id="msg" role="alert"></p>
+        <div class="btn-row spaced">
+          <button class="ghost-btn" id="saveProj" type="button">Simpan proyek ke file</button>
+          <label class="ghost-btn" id="loadProjBtn" style="text-align:center;cursor:pointer;margin:0;text-transform:none;letter-spacing:0;color:var(--muted-gray)"><span id="loadProjLabel">Buka proyek dari file</span><input type="file" id="loadProj" accept=".json,application/json" hidden></label>
+        </div>
+        <button class="ghost-btn" id="reset" type="button">Kosongkan semua isian</button>
+      </div>
+    </div>
+
+    <!-- PANEL 2: HASIL -->
+    <div id="tab-result" hidden>
+      <div class="card accent">
+        <h2>Hasil</h2>
+        <div id="warn"></div>
+        <div id="fileTabs" role="tablist" aria-label="Berkas hasil"></div>
+        <pre id="out">Belum ada hasil. Isi form dulu, lalu tekan tombol di bawah form.</pre>
+        <div class="btn-row">
+          <button class="submit-btn" id="copy" type="button">Salin</button>
+          <button class="submit-btn" id="zip" type="button" hidden>Unduh paket (.zip)</button>
+        </div>
+      </div>
+    </div>
+    </div><!-- /.workspace -->
+  </div>
+
+  <script>
+    /* ===================================================================
+       NEURA INCEPTA, generator paket proyek web app untuk AI coding agent
+       BAGIAN 1: DATA (pilihan, teks karakter, struktur form)
+       BAGIAN 2: LOGIKA (form, perakit prompt dan paket, pembuat zip)
+       BAGIAN 3: TEMA DAN EFEK (disalin dari Neura Prompt Generator)
+
+       Prinsip: yang menjembatani antar sesi bukan chat, tapi FILE di folder
+       proyek (AGENTS.md, SPEC.md, TASKS.md, HANDOFF.md). Neura membuat
+       paket awalnya, lalu agent yang merawat catatannya.
+       =================================================================== */
+
+    const PERSONAS = {
+      neru: {
+        accent: "neru",
+        greet: "Hmph, mau bikin aplikasi? Rumuskan dulu yang bener, jangan asal tempel ke agent.",
+        missing: (list) => "Masih kosong tuh: " + list + ". Lengkapi dulu, bukan salahku ya!",
+        copied: "Udah kusalin. Jangan salah tempel, ya!",
+        zipped: "Paketnya udah kuunduh. Ekstrak dulu sebelum dibuka, ya!",
+        saved: "Proyekmu jadi file. Simpan baik-baik, hmph.",
+        loaded: "Proyek dimuat. Cek lagi isinya!",
+        loadFail: "Itu bukan file proyek Neura Incepta. Salah file, ya?",
+        warnHead: "Hmph, ada yang janggal di rancanganmu, cek lagi ya:"
+      },
+      miku: {
+        accent: "sekai",
+        greet: "Halo halo! Yuk rancang aplikasi webmu bareng Miku~",
+        missing: (list) => "Eh, masih ada yang kosong nih: " + list + ". Isi dulu ya~",
+        copied: "Tersalin! Semangat bikin aplikasinya~",
+        zipped: "Paket sudah terunduh! Jangan lupa diekstrak ya~",
+        saved: "Proyek tersimpan jadi file~",
+        loaded: "Proyek berhasil dimuat~",
+        loadFail: "Hmm, ini bukan file proyek Neura Incepta nih~",
+        warnHead: "Eh, ada beberapa hal yang bisa dicek dulu nih~"
+      }
+    };
+
+    // Teks bantu untuk layar dan fitur (dipakai di SPEC.md bawaan)
+    const SCREEN_DESC = {
+      "Dashboard": "ringkasan angka penting dan jalan pintas ke fitur utama",
+      "Daftar data": "daftar semua data dalam bentuk tabel atau kartu, dengan aksi ubah dan hapus",
+      "Form tambah dan ubah": "formulir untuk menambah dan mengubah data, lengkap dengan validasi",
+      "Halaman detail": "tampilan lengkap satu data beserta data yang berhubungan",
+      "Laporan": "rekap data pada periode tertentu yang bisa dilihat dan dicetak",
+      "Pengaturan": "pengaturan aplikasi dan cadangan data",
+      "Login": "masuk ke aplikasi sesuai pengaturan akses"
+    };
+    const FEAT_DESC = {
+      "Cari": "pencarian cepat di daftar data",
+      "Filter dan urut": "menyaring dan mengurutkan daftar",
+      "Cetak atau PDF": "tampilan khusus cetak yang rapi",
+      "Grafik": "grafik ringkasan dari data",
+      "Upload file": "melampirkan file (misalnya foto) pada data",
+      "Pengingat": "pengingat yang muncul saat aplikasi terbuka",
+      "Riwayat perubahan": "catatan siapa mengubah apa dan kapan",
+      "Mode gelap": "tema gelap yang bisa dipilih pengguna"
+    };
+
+    // Struktur form KONSEP. Tipe kolom: text, area, select, check, chips, rows (daftar data), code (tempel teks panjang)
+    //   req: wajib  |  full: selebar kartu
+    const SECTIONS_CONCEPT = [
+      { title: "Ide dan tujuan", fields: [
+        { id: "appName", label: "Nama aplikasi", type: "text", req: true, full: true, hint: "Contoh: Kasir Toko Kelontong" },
+        { id: "appType", label: "Jenis aplikasi", type: "select",
+          options: ["Pencatatan data (CRUD)", "Inventaris dan stok", "Kasir dan penjualan", "Booking atau reservasi", "Manajemen tugas atau proyek", "Dashboard laporan", "Katalog atau portal informasi", "Alat atau kalkulator interaktif"] },
+        { id: "scale", label: "Skala pemakaian", type: "select",
+          options: ["Pribadi (satu orang)", "Tim kecil (2 sampai 10 orang)", "Publik (banyak orang berbeda)"] },
+        { id: "mainUser", label: "Pengguna utama dan konteks pemakaian", type: "text", req: true, full: true, hint: "Contoh: pemilik toko yang mencatat penjualan harian lewat HP" },
+        { id: "problem", label: "Masalah yang mau diselesaikan", type: "area", req: true, full: true, hint: "Apa yang terjadi sekarang tanpa aplikasi ini, dan kenapa itu merepotkan?" }
+      ]},
+      { title: "Pengguna dan akses", fields: [
+        { id: "login", label: "Login", type: "select", options: ["Tanpa login", "Login sederhana (satu peran)", "Login dengan beberapa peran"] },
+        { id: "sens", label: "Kepekaan data", type: "select",
+          options: ["Tidak sensitif", "Cukup sensitif (identitas, kontak)", "Sangat sensitif (keuangan, kesehatan)"] },
+        { id: "roles", label: "Peran dan hak akses (opsional)", type: "text", full: true, hint: "Contoh: admin bisa semua, staf hanya input dan lihat" }
+      ]},
+      { title: "Data yang dikelola", fields: [
+        { id: "entities", type: "rows", full: true },
+        { id: "relations", label: "Hubungan antar data (opsional)", type: "area", full: true, hint: "Contoh: satu pelanggan punya banyak pesanan, satu pesanan berisi banyak produk" },
+        { id: "sample", label: "Contoh data nyata (opsional)", type: "area", full: true, hint: "Tempel 2 sampai 3 baris contoh data asli supaya agent paham bentuknya. Jangan sertakan data pribadi." },
+        { id: "csv", label: "Perlu impor dan ekspor CSV", type: "check", full: true }
+      ]},
+      { title: "Layar yang dibutuhkan", fields: [
+        { id: "screens", type: "chips", multi: true, options: Object.keys(SCREEN_DESC) }
+      ]},
+      { title: "Fitur tambahan", fields: [
+        { id: "feats", type: "chips", multi: true, options: Object.keys(FEAT_DESC) }
+      ]},
+      { title: "Alur dan aturan", fields: [
+        { id: "flow", label: "Alur utama pengguna (3 sampai 5 langkah)", type: "area", req: true, full: true, hint: "Satu langkah per baris. Contoh: buka aplikasi, pilih produk, isi jumlah, simpan, lihat total hari ini" },
+        { id: "rules", label: "Aturan atau perhitungan khusus (opsional)", type: "area", full: true, hint: "Contoh: stok tidak boleh minus, diskon 10% untuk belanja di atas Rp 100.000" }
+      ]},
+      { title: "Penyimpanan dan tempat jalan", fields: [
+        { id: "storage", label: "Penyimpanan data", type: "select", full: true,
+          options: ["Tanpa server (simpan di browser)", "Database online (Supabase)"] },
+        { id: "devices", label: "Dipakai di", type: "select",
+          options: ["Satu perangkat saja", "Beberapa perangkat milik sendiri", "Banyak pengguna berbeda"] },
+        { id: "hosting", label: "Tempat aplikasi dijalankan", type: "select",
+          options: ["Dibuka langsung dari file (tanpa hosting)", "Hosting statis gratis (GitHub Pages, Netlify, Cloudflare Pages)", "Belum tahu"] }
+      ]},
+      { title: "Tampilan dan teknis", fields: [
+        { id: "style", label: "Gaya desain", type: "select",
+          options: ["Minimalis ala Apple", "Modern dashboard", "Bold dan ramai", "Editorial majalah", "Playful dan ramah"] },
+        { id: "color", label: "Warna utama", type: "select",
+          options: ["Netral atau monokrom", "Biru", "Hijau", "Merah", "Oranye", "Ungu", "Kuning"] },
+        { id: "uiLang", label: "Bahasa antarmuka", type: "select", options: ["Bahasa Indonesia", "English"] },
+        { id: "devfirst", label: "Prioritas layar", type: "select", options: ["HP dulu (mobile first)", "Desktop dulu", "Sama-sama penting"] },
+        { id: "stack", label: "Struktur kode", type: "select", full: true,
+          options: ["Satu file HTML (HTML, CSS, JavaScript biasa), disarankan untuk pemula", "Beberapa file tanpa build (HTML, CSS, JS terpisah)", "React + Vite (butuh Node.js dan langkah build)"] }
+      ]},
+      { title: "Agent dan cara kerja", fields: [
+        { id: "agent", label: "Alat agent utama", type: "select", full: true,
+          options: ["Google Antigravity", "Cursor", "Claude Code", "Codex", "Agent lain yang membaca AGENTS.md"] },
+        { id: "modelClass", label: "Kelas model agent", type: "select", full: true,
+          options: ["Model ringan (misalnya Gemini Flash)", "Model kuat (Pro, Sonnet, dan sejenisnya)"] },
+        { id: "ckpt", label: "Cara menyimpan checkpoint", type: "select", full: true,
+          options: ["Git (commit tiap tugas)", "Salin folder sebagai cadangan"] }
+      ]}
+    ];
+
+    // Tahap RAKIT PAKET: kolom tempel hasil rumusan AI
+    const SECTION_SPEC = { title: "Hasil rumusan dari AI (opsional)", fields: [
+      { id: "specPaste", label: "Tempel jawaban AI dari tahap Rumuskan", type: "code", full: true,
+        hint: "Tempel seluruh jawaban yang berjudul ## 1. RINGKASAN sampai ## 8. ASUMSI. Dikosongkan pun boleh, paket dibuat dari isian form." }
+    ]};
+
+    // Tahap TAMBAH FITUR
+    const SECTIONS_FEATURE = [
+      { title: "Fitur baru", fields: [
+        { id: "featName", label: "Nama fitur", type: "text", req: true, full: true, hint: "Contoh: Laporan penjualan mingguan" },
+        { id: "featDesc", label: "Apa yang harus bisa dilakukan fitur ini", type: "area", req: true, full: true, hint: "Jelaskan dari sisi pengguna, termasuk contoh hasil yang diharapkan." },
+        { id: "featImpact", label: "Dampak ke data", type: "select", full: true,
+          options: ["Hanya layar atau tampilan", "Menambah kolom atau tabel data", "Mengubah aturan yang sudah ada"] },
+        { id: "featWhere", label: "Posisi di daftar tugas", type: "select", full: true,
+          options: ["Sisipkan sebelum tugas uji akhir", "Tambahkan di paling akhir"] }
+      ]}
+    ];
+
+    /* ===================================================================
+       BAGIAN 2: LOGIKA PROGRAM
+       =================================================================== */
+    const STORE_KEY = "neura-incepta-v1";
+    const FENCE = "```";
+    const NEED = "[ISI DI SINI]";
+    const PLACEHOLDER = "Belum ada hasil. Isi form dulu, lalu tekan tombol di bawah form.";
+    const $ = (id) => document.getElementById(id);
+    const esc = (s) => String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;");
+    const attr = (s) => String(s || "").replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+    const slug = (s) => String(s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "proyek";
+
+    const defaults = () => ({
+      persona: "neru", mode: "idea",
+      entities: [{ name: "", cols: "" }],
+      screens: ["Daftar data", "Form tambah dan ubah"],
+      feats: ["Cari"],
+      csv: false
+    });
+    const state = loadState();
+
+    function loadState() {
+      let saved = {};
+      try { saved = JSON.parse(localStorage.getItem(STORE_KEY) || "{}"); } catch (e) {}
+      const s = Object.assign(defaults(), saved);
+      if (!Array.isArray(s.entities) || !s.entities.length) s.entities = [{ name: "", cols: "" }];
+      return s;
+    }
+    function saveState() {
+      try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {}
+    }
+
+    // ---------- bantuan membaca isian ----------
+    const val = (k) => String(state[k] || "").trim();
+    const lines = (s) => String(s || "").split("\n").map((x) => x.trim()).filter(Boolean);
+    const db = () => String(state.storage).startsWith("Database");
+    const lite = () => String(state.modelClass).startsWith("Model ringan");
+    const useGit = () => String(state.ckpt).startsWith("Git");
+    const stackKind = () => (String(state.stack).startsWith("Satu") ? "single" : String(state.stack).startsWith("Beberapa") ? "multi" : "react");
+    const entList = () => (state.entities || []).filter((e) => String(e.name || "").trim());
+
+    // pisahkan kolom dengan koma atau baris baru, koma di dalam kurung diabaikan
+    function splitCols(s) {
+      const out = []; let cur = "", d = 0;
+      for (const ch of String(s || "")) {
+        if (ch === "(" || ch === "[") d++;
+        if (ch === ")" || ch === "]") d = Math.max(0, d - 1);
+        if ((ch === "," && d === 0) || ch === "\n") { if (cur.trim()) out.push(cur.trim()); cur = ""; }
+        else cur += ch;
+      }
+      if (cur.trim()) out.push(cur.trim());
+      return out;
+    }
+
+    // ---------- bikin form dari struktur data ----------
+    let FIELDS = {};
+    const currentSections = () => MODES[state.mode].sections();
+
+    function renderEntities() {
+      const ents = state.entities;
+      return `<div class="full" id="entBox">` + ents.map((e, i) => `
+        <div class="entity" data-i="${i}">
+          <div class="entity-head">
+            <input type="text" class="ent-name" placeholder="Nama data, contoh: Produk" value="${attr(e.name)}" aria-label="Nama data ${i + 1}">
+            <button type="button" class="mini-btn" data-ent-del="${i}" ${ents.length < 2 ? "disabled" : ""}>Hapus</button>
+          </div>
+          <textarea class="ent-cols" placeholder="Kolom, pisahkan dengan koma atau baris baru. Contoh: nama, harga (angka), stok (angka)" aria-label="Kolom data ${i + 1}">${esc(e.cols)}</textarea>
+        </div>`).join("") + `<button type="button" class="ghost-btn" id="entAdd">Tambah data lain</button></div>`;
+    }
+
+    function renderField(f) {
+      const value = state[f.id];
+      const cls = "input-group" + (f.full ? " full" : "");
+      const wrap = (inner) => `<div class="${cls}">${inner}</div>`;
+      const label = f.label ? `<label for="${f.id}">${f.label}${f.req ? ' <span class="req">*</span>' : ""}</label>` : "";
+      if (f.type === "rows") return renderEntities();
+      if (f.type === "check") {
+        return `<div class="check-row full"><input type="checkbox" id="${f.id}" ${value ? "checked" : ""}><label for="${f.id}">${f.label}</label></div>`;
+      }
+      if (f.type === "code") {
+        return wrap(label + `<textarea id="${f.id}" class="code" spellcheck="false" placeholder="${attr(f.hint)}">${esc(value)}</textarea>`
+          + `<label class="file-btn">Unggah file teks<input type="file" id="${f.id}File" accept=".md,.markdown,.txt,text/plain" hidden></label>`);
+      }
+      if (f.type === "select") {
+        const cur = value || f.options[0];
+        const items = f.options.map((o) =>
+          `<div class="dd-item${o === cur ? " selected" : ""}" role="option" tabindex="-1" data-value="${attr(o)}">${esc(o)}</div>`).join("");
+        return wrap(label + `<div class="dd" data-dd="${f.id}"><button type="button" class="dd-btn" id="${f.id}" aria-haspopup="listbox" aria-expanded="false">${esc(cur)}</button><div class="dd-panel" role="listbox">${items}</div></div>`);
+      }
+      if (f.type === "area") return wrap(label + `<textarea id="${f.id}" placeholder="${attr(f.hint)}">${esc(value)}</textarea>`);
+      if (f.type === "chips") {
+        return `<div class="chips full" data-chips="${f.id}">` + f.options.map((o) =>
+          `<button type="button" class="chip" aria-pressed="${state[f.id].includes(o)}">${esc(o)}</button>`).join("") + "</div>";
+      }
+      return wrap(label + `<input type="text" id="${f.id}" placeholder="${attr(f.hint)}" value="${attr(value)}">`);
+    }
+
+    function renderForm() {
+      const secs = currentSections();
+      FIELDS = {};
+      secs.forEach((s) => s.fields.forEach((f) => {
+        FIELDS[f.id] = f;
+        if (state[f.id] === undefined && f.type !== "chips" && f.type !== "rows") {
+          state[f.id] = f.type === "check" ? false : (f.type === "select" ? f.options[0] : "");
+        }
+      }));
+      $("formArea").innerHTML = secs.map((s) =>
+        `<div class="card"><h2>${s.title}</h2><div class="grid">${s.fields.map(renderField).join("")}</div></div>`).join("");
+    }
+
+    // satu pendengar untuk semua kolom isian
+    function onFieldInput(e) {
+      const t = e.target;
+      if (t.classList && (t.classList.contains("ent-name") || t.classList.contains("ent-cols"))) {
+        const i = Number(t.closest(".entity").dataset.i);
+        state.entities[i][t.classList.contains("ent-name") ? "name" : "cols"] = t.value;
+        return saveState();
+      }
+      const f = FIELDS[t.id];
+      if (!f) return;
+      if (f.type === "check") state[f.id] = t.checked;
+      else if (f.type === "text" || f.type === "area" || f.type === "code") state[f.id] = t.value;
+      else return;
+      saveState();
+    }
+    $("formArea").addEventListener("input", onFieldInput);
+    $("formArea").addEventListener("change", (e) => {
+      const t = e.target;
+      if (t.type === "file" && t.id.endsWith("File")) {
+        const file = t.files[0], key = t.id.slice(0, -4);
+        if (!file) return;
+        const r = new FileReader();
+        r.onload = () => { state[key] = r.result; saveState(); const ta = $(key); if (ta) ta.value = r.result; };
+        r.readAsText(file);
+        return;
+      }
+      onFieldInput(e);
+    });
+
+    // klik: chips, tambah atau hapus data, dan daftar pilihan kustom
+    $("formArea").addEventListener("click", (e) => {
+      const chip = e.target.closest(".chip");
+      if (chip) {
+        const key = chip.parentElement.dataset.chips, text = chip.textContent;
+        const i = state[key].indexOf(text);
+        i > -1 ? state[key].splice(i, 1) : state[key].push(text);
+        chip.setAttribute("aria-pressed", i === -1);
+        return saveState();
+      }
+      if (e.target.closest("#entAdd")) { state.entities.push({ name: "", cols: "" }); saveState(); return renderForm(); }
+      const del = e.target.closest("[data-ent-del]");
+      if (del && state.entities.length > 1) { state.entities.splice(Number(del.dataset.entDel), 1); saveState(); return renderForm(); }
+
+      const dd = e.target.closest(".dd");
+      if (!dd) return;
+      const item = e.target.closest(".dd-item");
+      if (item) return pickOption(dd, item);
+      if (e.target.closest(".dd-btn")) {
+        const open = !dd.classList.contains("open");
+        closeAllDropdowns(dd);
+        dd.classList.toggle("open", open);
+        dd.querySelector(".dd-btn").setAttribute("aria-expanded", open);
+        const sel = dd.querySelector(".selected");
+        if (open && sel) sel.scrollIntoView({ block: "nearest" });
+      }
+    });
+    function closeAllDropdowns(except) {
+      document.querySelectorAll(".dd.open").forEach((d) => {
+        if (d === except) return;
+        d.classList.remove("open");
+        d.querySelector(".dd-btn").setAttribute("aria-expanded", "false");
+      });
+    }
+    function pickOption(dd, item) {
+      state[dd.dataset.dd] = item.dataset.value;
+      dd.querySelector(".dd-btn").textContent = item.dataset.value;
+      dd.querySelectorAll(".dd-item").forEach((i) => i.classList.toggle("selected", i === item));
+      closeAllDropdowns();
+      dd.querySelector(".dd-btn").focus();
+      saveState();
+    }
+    $("formArea").addEventListener("keydown", (e) => {
+      const dd = e.target.closest(".dd");
+      if (!dd) return;
+      const items = [...dd.querySelectorAll(".dd-item")];
+      const i = items.indexOf(document.activeElement);
+      if (e.key === "Escape") {
+        closeAllDropdowns();
+        dd.querySelector(".dd-btn").focus();
+      } else if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        e.preventDefault();
+        if (!dd.classList.contains("open")) dd.querySelector(".dd-btn").click();
+        const start = Math.max(items.findIndex((x) => x.classList.contains("selected")), 0);
+        const next = i === -1 ? start : Math.min(Math.max(i + (e.key === "ArrowDown" ? 1 : -1), 0), items.length - 1);
+        items[next].focus();
+      } else if ((e.key === "Enter" || e.key === " ") && i > -1) {
+        e.preventDefault();
+        pickOption(dd, items[i]);
+      }
+    });
+    document.addEventListener("click", (e) => { if (!e.target.closest(".dd")) closeAllDropdowns(); });
+
+    // ---------- karakter ----------
+    function setPersona(name, changeTheme) {
+      state.persona = name;
+      $("greet").textContent = PERSONAS[name].greet;
+      $("indicator").classList.toggle("right", name === "miku");
+      document.querySelectorAll("[data-persona]").forEach((b) => b.classList.toggle("active", b.dataset.persona === name));
+      if (changeTheme) setTheme(getBase(), PERSONAS[name].accent);
+      saveState();
+    }
+    document.querySelectorAll("[data-persona]").forEach((b) => b.addEventListener("click", () => setPersona(b.dataset.persona, true)));
+
+    // ---------- tab responsif ----------
+    let activeTab = "form";
+    function applyResponsivePanels() {
+      const desktop = window.matchMedia("(min-width: 901px)").matches;
+      $("tab-form").hidden = !desktop && activeTab !== "form";
+      $("tab-result").hidden = !desktop && activeTab !== "result";
+      document.querySelectorAll(".nav-item").forEach((b) => b.classList.toggle("active", b.dataset.tab === activeTab));
+    }
+    function showTab(name) { activeTab = name; applyResponsivePanels(); window.scrollTo({ top: 0, behavior: "smooth" }); }
+    document.querySelectorAll(".nav-item").forEach((b) => b.addEventListener("click", () => showTab(b.dataset.tab)));
+    window.addEventListener("resize", applyResponsivePanels, { passive: true });
+    applyResponsivePanels();
+    function updateResultPanelPosition() {
+      const desktop = window.matchMedia("(min-width: 901px)").matches;
+      document.body.classList.toggle("has-scrolled", desktop && window.scrollY > 180);
+    }
+    window.addEventListener("scroll", updateResultPanelPosition, { passive: true });
+    window.addEventListener("resize", updateResultPanelPosition, { passive: true });
+    updateResultPanelPosition();
+
+    /* -------------------------------------------------------------------
+       PEMBACA RUMUSAN AI
+       Jawaban AI wajib berjudul "## 1. RINGKASAN" sampai "## 8. ASUMSI".
+       Neura tidak "memahami" teksnya, hanya memotong per judul bernomor.
+       ------------------------------------------------------------------- */
+    const SPEC_KEY = { 1: "ringkasan", 2: "pengguna", 3: "data", 4: "layar", 5: "alur", 6: "aturan", 7: "tugas", 8: "asumsi" };
+    const SPEC_TITLE = { 1: "RINGKASAN", 2: "PENGGUNA DAN PERAN", 3: "DATA", 4: "LAYAR", 5: "ALUR UTAMA", 6: "ATURAN BISNIS", 7: "TUGAS PENGEMBANGAN", 8: "ASUMSI DAN PERTANYAAN TERBUKA" };
+
+    function parseSpec(text) {
+      const out = { sections: {}, found: [] };
+      const src = String(text || "").replace(/\r/g, "");
+      if (!src.trim()) return out;
+      const re = /^[ \t]*(?:#{1,4}[ \t]*(\d)[.)]|\*\*(\d)[.)])[ \t]*([^\n]*)$/gm;
+      const heads = [];
+      let m;
+      while ((m = re.exec(src))) {
+        const n = Number(m[1] || m[2]);
+        const title = (m[3] || "").toLowerCase();
+        if (!SPEC_KEY[n] || out.found.includes(n) || !title.includes(SPEC_KEY[n])) continue;
+        out.found.push(n);
+        heads.push({ n, start: m.index, end: m.index + m[0].length });
+      }
+      heads.forEach((h, i) => {
+        const stop = i + 1 < heads.length ? heads[i + 1].start : src.length;
+        out.sections[h.n] = src.slice(h.end, stop).trim();
+      });
+      return out;
+    }
+
+    // baris tugas: T1 | judul | hasil | cara cek
+    function parseTasks(body) {
+      const tasks = [];
+      String(body || "").split("\n").forEach((l) => {
+        const m = /^\s*(?:[-*]\s*)?(?:\*\*)?(T\d+)(?:\*\*)?\s*\|\s*(.+)$/.exec(l);
+        if (!m) return;
+        const p = m[2].split("|").map((x) => x.trim());
+        tasks.push({ id: m[1], title: p[0] || "", result: p[1] || "", check: p.slice(2).join(" | ") });
+      });
+      return tasks;
+    }
+    const taskMd = (t) => `- [ ] **${t.id}: ${t.title}**\n  - Hasil: ${t.result || NEED}\n  - Cara cek: ${t.check || NEED}`;
+
+    /* -------------------------------------------------------------------
+       TAHAP 1: RUMUSKAN (prompt untuk ChatGPT, Claude, atau Gemini)
+       ------------------------------------------------------------------- */
+    function conceptBlock() {
+      const L = [];
+      const add = (label, v) => { if (v && String(v).trim()) L.push(`- ${label}: ${String(v).trim()}`); };
+      add("Nama aplikasi", val("appName")); add("Jenis", state.appType); add("Skala", state.scale);
+      add("Pengguna utama", val("mainUser")); add("Masalah yang diselesaikan", val("problem"));
+      add("Login", state.login); add("Peran dan hak akses", val("roles")); add("Kepekaan data", state.sens);
+      add("Layar yang diinginkan", (state.screens || []).join(", "));
+      add("Fitur tambahan", (state.feats || []).join(", "));
+      add("Perlu impor dan ekspor CSV", state.csv ? "ya" : "");
+      add("Alur utama", lines(val("flow")).join(" > "));
+      add("Aturan khusus", lines(val("rules")).join("; "));
+      add("Penyimpanan", state.storage); add("Dipakai di", state.devices); add("Tempat berjalan", state.hosting);
+      add("Struktur kode", state.stack); add("Gaya desain", `${state.style}, warna ${String(state.color).toLowerCase()}`);
+      add("Bahasa antarmuka", state.uiLang); add("Prioritas layar", state.devfirst);
+      return L.join("\n");
+    }
+    function entityBlock() {
+      return entList().map((e) => `- ${e.name.trim()}: ${splitCols(e.cols).join(", ") || "(kolom belum ditentukan, usulkan)"}`).join("\n");
+    }
+
+    function buildIdea() {
+      const L = [];
+      L.push("PERAN", "Kamu adalah product analyst sekaligus software architect yang membantu pemula merumuskan aplikasi web yang realistis untuk dibangun oleh AI coding agent.", "");
+      L.push("TUGAS", "Dari konsep di bawah, tulis SPEK PROYEK versi 1. Utamakan cakupan KECIL yang pasti jadi, bukan yang lengkap. Kalau idenya terlalu besar, pangkas ke inti dan pindahkan sisanya ke bagian usulan.", "");
+      L.push("KONSEP DARI PEMILIK", conceptBlock(), "");
+      L.push("DATA YANG SUDAH DIRENCANAKAN", entityBlock());
+      if (val("relations")) L.push("", "HUBUNGAN ANTAR DATA", val("relations"));
+      if (val("sample")) L.push("", "CONTOH DATA NYATA", FENCE, val("sample"), FENCE);
+      L.push("", "ATURAN");
+      L.push("- Jangan bertanya balik. Kalau informasi kurang, buat asumsi paling masuk akal lalu tulis di bagian 8.");
+      L.push("- Jangan menambah fitur di luar daftar. Kalau ada usulan, tandai sebagai \"usulan\" di bagian 8.");
+      L.push("- Pakai penyimpanan dan struktur kode yang sudah dipilih. Jangan menyarankan menggantinya.");
+      L.push("- Nama tabel dan kolom ditulis huruf kecil dengan garis bawah (snake_case) dan konsisten satu bahasa.");
+      L.push(lite()
+        ? "- Agent pelaksananya model ringan. Satu tugas = satu hasil yang bisa dites, paling banyak satu layar atau satu modul kecil. Targetkan sekitar 10 sampai 14 tugas, jangan lebih dari 16."
+        : "- Satu tugas boleh mencakup satu fitur utuh (misalnya data dan layarnya sekaligus). Targetkan sekitar 8 sampai 12 tugas.");
+      L.push("- Tiap tugas WAJIB punya \"cara cek\" berupa langkah klik di browser yang bisa dilakukan orang awam tanpa membaca kode.");
+      L.push("- Tugas pertama selalu kerangka aplikasi, tugas terakhir selalu uji akhir. Urutkan sesuai ketergantungan.");
+      if (db()) {
+        L.push("- Penyimpanan memakai Supabase. Sertakan satu tugas skema SQL (tabel, tipe kolom, relasi, dan Row Level Security) yang ditulis ke file database/schema.sql, lalu satu tugas berjudul diawali [MANUAL] untuk langkah yang harus dikerjakan pemilik sendiri (menjalankan SQL dan menyalin URL serta kunci publik). Frontend hanya boleh memakai kunci publik.");
+      } else {
+        L.push("- Data disimpan di browser dan bisa hilang kalau cache dibersihkan. Sertakan satu modul data terpusat dan satu tugas ekspor dan impor cadangan data (JSON).");
+      }
+      L.push("", "FORMAT KELUARAN (WAJIB PERSIS)", "Gunakan tepat delapan judul bernomor berikut, tanpa judul lain dan tanpa kata pengantar:", "",
+        "## 1. RINGKASAN", "(3 sampai 5 kalimat)", "",
+        "## 2. PENGGUNA DAN PERAN", "(siapa saja, apa yang boleh mereka lakukan)", "",
+        "## 3. DATA", "(per data: nama, lalu daftar kolom dengan format nama_kolom (tipe): catatan, lalu relasinya)", "",
+        "## 4. LAYAR", "(tiap layar: tujuan, isi, dan aksi utama)", "",
+        "## 5. ALUR UTAMA", "(langkah bernomor)", "",
+        "## 6. ATURAN BISNIS", "(validasi dan perhitungan, tulis " + NEED + " bila datanya belum ada)", "",
+        "## 7. TUGAS PENGEMBANGAN", "(satu tugas per baris, persis format di bawah)",
+        "T1 | judul singkat | hasil yang harus ada | cara cek (langkah klik)", "",
+        "## 8. ASUMSI DAN PERTANYAAN TERBUKA", "(asumsi yang kamu buat, usulan, dan hal yang perlu diputuskan pemilik)");
+      return [{ name: "PROMPT_RUMUSKAN.txt", content: L.join("\n") }];
+    }
+
+    /* -------------------------------------------------------------------
+       TAHAP 2: RAKIT PAKET (AGENTS, SPEC, TASKS, HANDOFF, PANDUAN, prompt)
+       ------------------------------------------------------------------- */
+    function formSections() {
+      const ents = entList(), S = {};
+      S[1] = `${val("appName")} adalah aplikasi web untuk ${val("mainUser")}.\n\nJenis aplikasi: ${state.appType}\n\nMasalah yang diselesaikan: ${val("problem")}\n\nSkala pemakaian: ${String(state.scale).toLowerCase()}. Versi 1 sengaja berfokus pada inti supaya cepat selesai dan mudah dites.`;
+      S[2] = [
+        `- Pengguna utama: ${val("mainUser")}`,
+        `- Login: ${state.login}`,
+        `- Peran dan hak akses: ${val("roles") || (String(state.login).startsWith("Login dengan") ? NEED : "satu jenis pengguna, tanpa pembedaan hak akses")}`,
+        `- Kepekaan data: ${state.sens}`
+      ].join("\n");
+      S[3] = ents.map((e) => `### ${e.name.trim()}\n- id (dibuat otomatis)\n` + (splitCols(e.cols).map((c) => `- ${c}`).join("\n") || `- ${NEED}`)).join("\n\n")
+        + (val("relations") ? `\n\nRelasi antar data:\n${val("relations")}` : "")
+        + (val("sample") ? `\n\nContoh data nyata:\n${FENCE}\n${val("sample")}\n${FENCE}` : "")
+        + (state.csv ? "\n\nData harus bisa diimpor dan diekspor dalam format CSV." : "");
+      const scr = (state.screens || []).map((s) => `- ${s}: ${SCREEN_DESC[s]}`);
+      const fe = (state.feats || []).map((f) => `- ${f}: ${FEAT_DESC[f]}`);
+      S[4] = (scr.length ? scr.join("\n") : `- ${NEED}`) + (fe.length ? `\n\nFitur tambahan:\n${fe.join("\n")}` : "");
+      S[5] = lines(val("flow")).map((l, i) => `${i + 1}. ${l.replace(/^\d+[.)]\s*/, "")}`).join("\n");
+      S[6] = (lines(val("rules")).map((l) => `- ${l.replace(/^[-*]\s*/, "")}`).join("\n") || `- ${NEED} (aturan khusus belum diisi)`)
+        + "\n- Semua input divalidasi sebelum disimpan, dan kesalahan ditampilkan dengan pesan yang jelas.\n- Menghapus data selalu meminta konfirmasi.";
+      S[8] = "- Spek ini disusun langsung dari isian form tanpa rumusan AI. Periksa dulu sebelum agent mulai bekerja.\n- Di luar cakupan versi 1: semua hal yang tidak tertulis di atas.\n- Bagian bertanda " + NEED + " harus dilengkapi pemilik sebelum tugas terkait dikerjakan.";
+      return S;
+    }
+
+    // daftar tugas bawaan kalau rumusan AI tidak tersedia
+    function genTasks() {
+      const ents = entList(), screens = state.screens || [], feats = state.feats || [];
+      const T = [];
+      const add = (title, result, check) => T.push({ id: "T" + (T.length + 1), title, result, check });
+      add("Kerangka dan navigasi",
+        `Struktur awal aplikasi dengan layar kosong untuk ${screens.length ? screens.join(", ") : "layar utama"}, navigasi antar layar, dan gaya visual ${state.style} dengan warna ${String(state.color).toLowerCase()}.`,
+        "Buka aplikasi di browser lalu klik setiap menu atau tombol navigasi. Setiap layar harus tampil tanpa pesan error.");
+      if (db()) {
+        add("Skema database dan keamanan (file SQL)",
+          `File database/schema.sql berisi tabel ${ents.map((e) => e.name.trim()).join(", ")} lengkap dengan tipe kolom, relasi, dan Row Level Security yang aktif di setiap tabel.`,
+          "Baca file SQL. Setiap tabel punya kebijakan akses yang jelas, dan tidak ada tabel yang terbuka penuh untuk umum kecuali disetujui di SPEC.md.");
+        add("[MANUAL] Pasang database di Supabase",
+          "Pemilik menjalankan schema.sql di Supabase lalu menyalin URL proyek dan kunci publik. Agent hanya menyiapkan file konfigurasi dan petunjuk singkatnya.",
+          "Di dasbor Supabase semua tabel muncul dan RLS aktif. Aplikasi bisa membaca satu tabel tanpa error.");
+        add("Lapisan data",
+          "Satu modul yang menjadi satu-satunya pintu ke database (ambil, tambah, ubah, hapus) dengan penanganan error yang jelas.",
+          "Aplikasi menampilkan satu data dari database. Matikan internet lalu muat ulang: harus muncul pesan error yang ramah, bukan layar kosong.");
+      } else {
+        add("Lapisan data lokal",
+          "Satu modul yang menyimpan dan membaca semua data dari penyimpanan browser, lengkap dengan beberapa data contoh awal.",
+          "Tambah satu data, muat ulang halaman, data harus tetap ada.");
+      }
+      if (!String(state.login).startsWith("Tanpa")) {
+        add("Login dan peran",
+          `Layar login dan pembatasan akses sesuai SPEC.md bagian 2${db() ? ", memakai autentikasi bawaan Supabase dan kebijakan RLS yang menyesuaikan peran" : ". Catatan: login di browser hanya tampilan, bukan pengamanan sungguhan"}.`,
+          "Masuk dengan setiap peran lalu coba membuka layar yang tidak boleh diakses. Akses harus ditolak dengan pesan yang jelas.");
+      }
+      ents.forEach((e) => {
+        const n = e.name.trim(), cols = splitCols(e.cols).join(", ") || NEED;
+        if (lite()) {
+          add(`Daftar dan tambah ${n}`, `Layar daftar ${n} dan formulir tambah (kolom: ${cols}) dengan validasi.`,
+            `Tambah satu data ${n} lewat formulir, data muncul di daftar. Muat ulang, data tetap ada. Kirim formulir kosong, harus muncul pesan kesalahan yang jelas.`);
+          add(`Ubah dan hapus ${n}`, `Aksi ubah dan hapus pada daftar ${n}, dengan konfirmasi sebelum menghapus.`,
+            `Ubah satu data, hasilnya langsung terlihat. Hapus satu data, muncul konfirmasi, lalu data hilang dan tetap hilang setelah muat ulang.`);
+        } else {
+          add(`Kelola ${n}`, `Layar daftar, formulir tambah dan ubah, serta hapus untuk ${n} (kolom: ${cols}), dengan validasi dan konfirmasi hapus.`,
+            `Tambah, ubah, lalu hapus satu data ${n}. Muat ulang setelah tiap langkah, hasilnya harus konsisten. Kirim formulir kosong, harus muncul pesan kesalahan yang jelas.`);
+        }
+      });
+      if (screens.includes("Dashboard")) add("Dashboard", "Layar ringkasan berisi angka penting dari data yang ada.", "Tambah atau hapus satu data, angka di dashboard ikut berubah dan cocok dengan hitungan manual.");
+      if (screens.includes("Laporan")) add("Laporan", "Layar laporan yang merekap data pada periode yang bisa dipilih.", "Pilih periode, hasil rekap cocok dengan hitungan manual dari data yang ada.");
+      const sf = feats.filter((f) => f === "Cari" || f === "Filter dan urut");
+      if (sf.length) add(sf.join(" dan "), "Pencarian, penyaringan, dan pengurutan pada daftar data utama.", "Cari satu kata yang ada dan satu yang tidak ada. Hasil harus tepat dan pesan \"tidak ditemukan\" harus ramah.");
+      if (feats.includes("Cetak atau PDF")) add("Cetak atau PDF", "Tombol cetak dengan tampilan khusus cetak yang rapi.", "Tekan tombol cetak, pratinjau hanya berisi konten yang relevan tanpa menu dan tombol.");
+      if (feats.includes("Grafik")) add("Grafik", "Grafik ringkasan dari data utama.", "Ubah data, grafik ikut berubah dan angkanya cocok dengan hitungan manual.");
+      if (feats.includes("Upload file")) add("Upload file", `Melampirkan file pada data${db() ? " memakai penyimpanan file dari layanan database" : ", dengan batas ukuran yang jelas karena penyimpanan browser terbatas"}.`, "Unggah satu file kecil dan satu yang terlalu besar. Yang kecil berhasil, yang besar ditolak dengan pesan jelas.");
+      if (feats.includes("Pengingat")) add("Pengingat", "Pengingat yang muncul saat aplikasi terbuka (bukan notifikasi push).", "Atur satu pengingat untuk waktu dekat, saat tiba harus muncul di layar.");
+      if (feats.includes("Riwayat perubahan")) add("Riwayat perubahan", "Catatan siapa mengubah apa dan kapan untuk data utama.", "Ubah satu data, riwayat mencatatnya lengkap dengan waktu.");
+      if (feats.includes("Mode gelap")) add("Mode gelap", "Pilihan tema gelap yang tersimpan.", "Aktifkan mode gelap, muat ulang, pilihan tetap dan semua teks tetap terbaca.");
+      if (state.csv) add("Impor dan ekspor CSV", "Tombol ekspor dan impor CSV untuk data utama dengan validasi baris yang salah.", "Ekspor, buka di spreadsheet, lalu impor kembali. Data harus sama. Impor file yang salah format, harus muncul pesan jelas.");
+      if (!db()) add("Cadangan data", "Ekspor dan impor seluruh data aplikasi sebagai satu file JSON, karena data browser bisa hilang saat cache dibersihkan.", "Ekspor, hapus semua data, impor file tadi. Semua data kembali utuh.");
+      if (screens.includes("Pengaturan")) add("Pengaturan", "Layar pengaturan aplikasi sesuai SPEC.md.", "Ubah satu pengaturan, muat ulang, pengaturan tetap tersimpan.");
+      add("Uji akhir dan rapikan", "Semua layar rapi di HP dan desktop, kondisi kosong dan pesan error jelas, plus petunjuk singkat cara menjalankan aplikasi.",
+        "Jalankan seluruh alur utama dari SPEC.md bagian 5, dari awal sampai akhir, di layar HP dan desktop, tanpa error.");
+      return T;
+    }
+
+    function runInstruction() {
+      const k = stackKind();
+      if (k === "single") return "Buka index.html langsung di browser (klik dua kali).";
+      if (k === "multi") return "Buka index.html di browser. Kalau modul JavaScript diblokir browser, jalankan server lokal sederhana di folder proyek (misalnya python3 -m http.server) lalu buka alamat yang ditampilkan.";
+      return "Jalankan npm install satu kali, lalu npm run dev dan buka alamat yang ditampilkan.";
+    }
+
+    function buildAgents() {
+      const k = stackKind(), L = [];
+      L.push(`# AGENTS.md, aturan kerja untuk "${val("appName")}"`, "",
+        "Kamu adalah agent pengembang. Pemilik proyek bukan programmer berpengalaman, jadi hasil harus sederhana, bisa dites tanpa membaca kode, dan dijelaskan dengan bahasa awam.", "",
+        "## Berkas acuan",
+        "- SPEC.md: apa yang dibangun (sumber kebenaran, jangan diubah tanpa persetujuan).",
+        "- TASKS.md: urutan kerja, satu tugas per langkah.",
+        "- HANDOFF.md: kondisi terakhir proyek dan catatan antar sesi.",
+        "Baca ketiganya di awal setiap sesi. Jangan mengandalkan ingatan percakapan, karena sesi bisa berganti alat, akun, atau model.", "",
+        "## Cara kerja (wajib)",
+        "1. Kerjakan SATU tugas dari TASKS.md pada satu waktu, sesuai urutan. Jangan melompat atau menggabungkan tugas.",
+        "2. SEBELUM mulai: isi bagian \"Sedang dikerjakan\" di HANDOFF.md (tugas, rencana singkat, file yang akan disentuh).",
+        useGit()
+          ? "3. CHECKPOINT: sebelum mengubah kode, pastikan kondisi sebelumnya sudah di-commit git. Setelah cek lolos, commit dengan pesan \"T<nomor>: <judul>\"."
+          : "3. CHECKPOINT: sebelum mengubah kode, minta pemilik menyalin folder proyek sebagai cadangan, lalu tunggu konfirmasi.",
+        "4. SESUDAH selesai: jalankan \"Cara cek\" tugas itu, tandai [x] di TASKS.md, lalu perbarui HANDOFF.md (status, keputusan, masalah terbuka, tugas berikutnya, satu baris di riwayat sesi).",
+        "5. Setelah itu BERHENTI. Laporkan hasil maksimal 5 baris dan tunggu pemilik berkata \"lanjut\".",
+        "6. Kalau spek tidak jelas, bertentangan, atau ada bagian " + NEED + ", berhenti dan tanya. Jangan menebak.",
+        "7. Jangan mengubah file atau fitur di luar tugas yang sedang dikerjakan. Jangan mengubah SPEC.md tanpa persetujuan.",
+        "8. Jangan mengarang data, URL, kunci, atau nama kolom yang tidak ada di SPEC.md.",
+        "9. Untuk tugas bertanda [MANUAL], siapkan petunjuk lalu berhenti. Pemilik yang mengerjakannya.", "",
+        "## Batasan teknis",
+        `- Struktur kode: ${state.stack}`,
+        `- Penyimpanan: ${state.storage}`,
+        `- Dipakai di: ${state.devices}. Tempat berjalan: ${state.hosting}`,
+        `- Antarmuka: ${state.uiLang}, ${state.devfirst}, gaya ${state.style}, warna ${String(state.color).toLowerCase()}`,
+        "- Jangan menambah pustaka atau dependensi baru tanpa izin. Kalau perlu, jelaskan alasannya dan minta persetujuan.",
+        "- Kode: nama jelas, fungsi kecil, komentar singkat berbahasa Indonesia pada bagian penting.");
+      if (k === "single") L.push("- Semua kode berada di satu file index.html (CSS di tag style, JavaScript di tag script), dipecah dengan komentar penanda bagian.");
+      if (k === "multi") L.push("- Struktur: index.html, style.css, dan beberapa file .js per modul. Tanpa langkah build, harus bisa dibuka langsung di browser.");
+      if (k === "react") L.push("- React dengan Vite. Jelaskan perintah yang harus dijalankan pemilik (npm install, npm run dev) dan jaga struktur folder sederhana.");
+      L.push("", "## Keamanan", "- Jangan menaruh kunci rahasia, password, atau token privat di kode maupun file proyek.");
+      if (db()) {
+        L.push("- Frontend hanya boleh memakai URL proyek dan kunci publik Supabase (publishable key, atau anon key pada proyek lama). Kunci secret atau service_role dilarang ada di frontend maupun file mana pun di proyek.",
+          "- Setiap tabel WAJIB mengaktifkan Row Level Security dengan kebijakan yang tertulis jelas. Jangan membuat tabel terbuka penuh tanpa persetujuan pemilik.",
+          "- Perubahan skema ditulis sebagai file SQL di folder database/ untuk dijalankan pemilik. Jangan mengasumsikan kamu bisa mengubah database langsung.");
+      } else {
+        L.push("- Data disimpan di browser dan bisa hilang kalau cache dibersihkan. Semua akses data lewat satu modul, dan sediakan ekspor dan impor cadangan (JSON).");
+        if (!String(state.login).startsWith("Tanpa")) L.push("- Login di sisi browser hanya tampilan, bukan pengamanan sungguhan. Jangan menyebutnya aman.");
+      }
+      L.push("- Anggap semua input pengguna tidak tepercaya: validasi, dan jangan memasukkan teks pengguna mentah ke innerHTML.");
+      if (!String(state.sens).startsWith("Tidak")) L.push("- Data sensitif: tampilkan seperlunya, jangan menulis data pribadi ke log atau konsol.");
+      L.push("", "## Ukuran tugas",
+        lite()
+          ? "Kamu berjalan di model ringan. Kerjakan tugas sekecil mungkin, baca ulang file yang akan diubah sebelum mengubahnya, dan jangan menulis ulang file utuh kalau cukup mengubah sebagian."
+          : "Satu tugas boleh mencakup satu fitur utuh, tapi tetap berhenti dan lapor setelah tiap tugas.", "",
+        "## Kalau sesi baru atau terputus",
+        useGit()
+          ? "- Baca HANDOFF.md dulu, lalu periksa kondisi proyek dengan git status dan git diff."
+          : "- Baca HANDOFF.md dulu, lalu periksa kondisi folder proyek dan bandingkan dengan cadangan yang disebut pemilik.",
+        "- Kalau ada perubahan setengah jadi dari sesi sebelumnya, jelaskan apa yang terlihat dan tanya pemilik: dilanjutkan atau dibatalkan. Jangan memutuskan sendiri.");
+      return L.join("\n");
+    }
+
+    function buildHandoff() {
+      return [`# HANDOFF: ${val("appName")}`, "",
+        "> Diperbarui agent di AWAL dan AKHIR setiap tugas. Sesi baru (alat, akun, atau model lain) mulai dari file ini. Jangan dihapus.", "",
+        "## Status", "- Tugas aktif: (belum ada)", "- Terakhir selesai: (belum ada)", "- Tugas berikutnya: T1", "",
+        "## Sedang dikerjakan (diisi di awal tugas)", "- Tugas:", "- Rencana singkat:", "- File yang akan disentuh:", "",
+        "## Keputusan yang sudah diambil", "(tulis keputusan dan alasan singkatnya, jangan dihapus)", "",
+        "## Masalah terbuka dan bug yang diketahui", "(kosong)", "",
+        "## Cara menjalankan dan mengetes", runInstruction(), "",
+        "## Riwayat sesi (terbaru di atas)", "- (belum ada. Format: tanggal, alat dan model, ringkasan 1 sampai 2 baris)"].join("\n");
+    }
+
+    function buildGuide(tasks) {
+      const manual = tasks.find((t) => /^\[MANUAL\]/i.test(t.title));
+      const agent = String(state.agent);
+      const L = [`# PANDUAN: ${val("appName")}`, "",
+        "Panduan untuk kamu (pemilik proyek), bukan untuk agent. Agent membaca AGENTS.md, SPEC.md, TASKS.md, dan HANDOFF.md.", "",
+        "## Isi paket",
+        "- AGENTS.md: aturan kerja agent.",
+        "- SPEC.md: apa yang dibangun (sumber kebenaran).",
+        "- TASKS.md: daftar tugas kecil berurutan beserta cara mengeceknya.",
+        "- HANDOFF.md: catatan kondisi terakhir, diisi agent. Ini yang membuat proyek bisa pindah sesi, alat, atau akun.",
+        "- PROMPT_MULAI.txt: pesan pertama untuk agent.",
+        "- PROMPT_LANJUT.txt: pesan untuk setiap sesi lanjutan.",
+        "- .gitignore: daftar file yang tidak boleh ikut tersimpan di git (misalnya file rahasia).", "",
+        "## Langkah awal",
+        "1. Ekstrak file .zip ini. Hasilnya satu folder proyek.",
+        useGit()
+          ? "2. Buka terminal di folder itu lalu jalankan: git init, git add -A, git commit -m \"awal\". Ini titik aman pertamamu."
+          : "2. Salin seluruh folder itu sebagai cadangan awal (misalnya beri nama belakang -cadangan-0).",
+        `3. ${agent === "Google Antigravity"
+          ? "Buka Antigravity lalu buka folder proyek (menu File, Open Folder). Buka panel agent. Nama menu bisa berbeda antar versi."
+          : agent === "Claude Code"
+            ? "Buka terminal di folder proyek lalu jalankan claude. Claude Code membaca CLAUDE.md, jadi kalau perlu buat file CLAUDE.md berisi satu baris @AGENTS.md (cek dokumentasi alatnya)."
+            : `Buka folder proyek di ${agent}.`}`,
+        "4. Tempel isi PROMPT_MULAI.txt sebagai pesan pertama. Kalau alatmu tampak tidak membaca AGENTS.md otomatis, tidak masalah: prompt itu sudah menyuruh agent membacanya.",
+        "5. Agent akan merangkum proyek dan rencana T1. Kalau sudah benar, balas: mulai.", "",
+        "## Ritme tiap tugas",
+        "1. Agent mengerjakan satu tugas lalu berhenti dan melapor.",
+        "2. Kamu menjalankan \"Cara cek\" tugas itu di TASKS.md sendiri. Jangan hanya percaya laporan agent.",
+        "3. Lolos: balas lanjut. Tidak lolos: laporkan gejala persisnya (apa yang kamu klik, apa yang muncul).",
+        useGit() ? "4. Pastikan agent sudah commit sebelum lanjut." : "4. Salin folder proyek sebagai cadangan sebelum lanjut ke tugas berikutnya.", ""];
+      L.push("## Kalau limit habis atau mau pindah akun, alat, atau window",
+        "Semua ingatan proyek ada di file, bukan di chat. Jadi pindah itu aman selama kamu mengikuti urutan ini:",
+        "1. Jangan menekan ulang berkali-kali kalau agent terputus. Tunggu atau pindah.",
+        useGit()
+          ? "2. Lihat keadaan folder dengan git status. Kalau ada perubahan yang belum di-commit, itu kemungkinan pekerjaan setengah jadi."
+          : "2. Bandingkan folder sekarang dengan cadangan terakhir. Selisihnya kemungkinan pekerjaan setengah jadi.",
+        "3. Buka folder yang SAMA di alat atau akun lain (atau tunggu jatahmu diperbarui).",
+        "4. Tempel isi PROMPT_LANJUT.txt. Agent baru akan membaca HANDOFF.md, melaporkan apa yang dilihatnya, dan bertanya soal pekerjaan setengah jadi. Kamu yang memutuskan: lanjutkan atau batalkan.",
+        "5. Catatan: pindah ke alat lain yang punya tier gratis sendiri biasanya lebih aman daripada membuat banyak akun untuk menembus batas. Banyak layanan melarang cara itu di syarat layanannya dan akunnya bisa diblokir. Cek aturan alat yang kamu pakai.", "");
+      if (db()) {
+        L.push("## Menyiapkan database (Supabase), dikerjakan manual oleh kamu",
+          "Agent tidak bisa membuat akun atau mengambil kunci untukmu.",
+          "1. Buat akun di supabase.com lalu buat proyek baru (tersedia paket gratis).",
+          `2. Setelah agent menulis database/schema.sql${manual ? ` (tugas ${manual.id} di TASKS.md)` : ""}, buka SQL Editor di dasbor Supabase, tempel isi file itu, lalu jalankan.`,
+          "3. Cek di dasbor bahwa semua tabel muncul dan Row Level Security (RLS) aktif di tiap tabel.",
+          "4. Buka pengaturan API proyek, salin Project URL dan kunci publik. Kunci publik sekarang disebut publishable key (diawali sb_publishable_). Proyek lama mungkin masih memakai anon key dengan fungsi yang sama.",
+          "5. Berikan URL dan kunci publik itu ke agent untuk dimasukkan ke file konfigurasi aplikasi.",
+          "6. JANGAN PERNAH memberikan atau menempel kunci secret atau service_role ke agent, chat, atau file proyek. Kunci itu melewati semua pengaman data.",
+          "Catatan: proyek gratis Supabase dijeda otomatis kalau hampir tidak ada aktivitas selama sekitar seminggu, dan bisa dipulihkan dari dasbor. Nama menu dan kebijakan bisa berubah, jadi ikuti dokumentasi resmi Supabase kalau berbeda dari tulisan ini.", "");
+      }
+      L.push("## Tempat aplikasi dijalankan",
+        String(state.hosting).startsWith("Dibuka")
+          ? "Aplikasi dibuka langsung dari file, jadi hanya jalan di perangkat tempat file itu berada."
+          : String(state.hosting).startsWith("Hosting")
+            ? "Setelah semua tugas lolos uji, unggah folder aplikasi ke layanan hosting statis gratis (GitHub Pages, Netlify, atau Cloudflare Pages) mengikuti petunjuk layanan itu. Minta agent menyiapkan daftar file yang perlu diunggah."
+            : "Putuskan setelah aplikasinya jadi. Aplikasi statis bisa dipindah ke hosting mana pun.", "",
+        "## Kalau agent menyimpang",
+        "Tempel pesan ini:", FENCE,
+        "Berhenti. Jangan lanjut menulis kode. (1) Sebutkan semua file yang kamu ubah di sesi ini. (2) Pisahkan mana yang termasuk tugas yang sedang berjalan dan mana yang tidak. (3) Usulkan cara membatalkan yang di luar tugas (git restore atau mengembalikan dari cadangan), lalu tunggu persetujuanku sebelum menjalankannya.",
+        FENCE, "",
+        "## Catatan jujur",
+        "Paket ini mengurangi kesalahan, bukan menghilangkannya. Selalu uji sendiri tiap tugas. Jatah gratis agent bisa terbatas dan berubah, jadi tugas kecil dan berhenti setelah tiap tugas juga menghemat jatah.");
+      return L.join("\n");
+    }
+
+    function buildPack() {
+      const ai = parseSpec(state.specPaste);
+      const form = formSections();
+      const pick = (n) => (ai.sections[n] && ai.sections[n].trim() ? ai.sections[n].trim() : form[n]);
+      const spec = [`# SPEK: ${val("appName")}`, "",
+        "> Sumber kebenaran untuk apa yang dibangun. Agent tidak boleh mengubah file ini tanpa persetujuan pemilik. Bagian 7 (tugas pengembangan) ada di TASKS.md dan batasan teknis ada di AGENTS.md.", ""];
+      [1, 2, 3, 4, 5, 6, 8].forEach((n) => spec.push(`## ${n}. ${SPEC_TITLE[n]}`, "", pick(n), ""));
+      spec.push("## Riwayat perubahan spek", "", "- (belum ada)");
+
+      let tasks = parseTasks(ai.sections[7]);
+      if (!tasks.length) tasks = genTasks();
+      const tasksMd = [`# TASKS: ${val("appName")}`, "",
+        "> Kerjakan berurutan, satu per satu. Tandai [x] setelah \"Cara cek\" lolos. Jangan menghapus tugas yang sudah selesai.", "",
+        tasks.map(taskMd).join("\n\n")].join("\n");
+
+      const first = tasks[0];
+      const start = [`Kamu adalah agent pengembang untuk proyek "${val("appName")}".`,
+        "Baca file berikut di folder proyek, berurutan: AGENTS.md, SPEC.md, TASKS.md, HANDOFF.md.",
+        "Setelah membaca, JANGAN menulis kode dulu. Balas dengan:",
+        "1. Ringkasan proyek dalam 3 kalimat.",
+        "2. Hal di SPEC.md yang menurutmu tidak jelas atau saling bertentangan (kalau tidak ada, tulis \"tidak ada\").",
+        `3. Rencana singkat untuk ${first ? first.id : "tugas pertama"}${first ? ` (${first.title})` : ""}.`,
+        "Lalu tunggu aku berkata \"mulai\"."].join("\n");
+      const resume = ["Ini sesi LANJUTAN. Alat, akun, atau modelnya mungkin berbeda dari sesi sebelumnya. Kamu tidak punya ingatan sesi lalu, semua informasi ada di file.",
+        "1. Baca AGENTS.md, lalu HANDOFF.md, lalu TASKS.md, lalu SPEC.md.",
+        useGit()
+          ? "2. Periksa kondisi proyek dengan git status dan git diff."
+          : "2. Periksa kondisi folder proyek dan bandingkan dengan HANDOFF.md.",
+        "3. Kalau ada perubahan setengah jadi dari sesi sebelumnya, jelaskan apa yang kamu lihat dan tanya aku: dilanjutkan atau dibatalkan. Jangan memutuskan sendiri.",
+        "4. Ringkas posisi proyek dalam 4 baris (selesai, sedang dikerjakan, berikutnya, masalah terbuka), lalu tunggu aku berkata \"lanjut\". Jangan menulis kode sebelum itu."].join("\n");
+      const gitignore = [".env", ".env.*", "*.local", "node_modules/", "dist/", ".DS_Store", "Thumbs.db"].join("\n");
+
+      return [
+        { name: "AGENTS.md", content: buildAgents() },
+        { name: "SPEC.md", content: spec.join("\n") },
+        { name: "TASKS.md", content: tasksMd },
+        { name: "HANDOFF.md", content: buildHandoff() },
+        { name: "PANDUAN.md", content: buildGuide(tasks) },
+        { name: "PROMPT_MULAI.txt", content: start },
+        { name: "PROMPT_LANJUT.txt", content: resume },
+        { name: ".gitignore", content: gitignore }
+      ];
+    }
+
+    /* -------------------------------------------------------------------
+       TAHAP 3: TAMBAH FITUR (prompt untuk agent, lewat spek dan tugas)
+       ------------------------------------------------------------------- */
+    function buildFeature() {
+      const L = [];
+      L.push("PERAN", `Kamu adalah agent pengembang pada proyek${val("appName") ? ` "${val("appName")}"` : " ini"}. Aturan kerja ada di AGENTS.md.`, "");
+      L.push("TUGAS", "Tambahkan fitur baru ke PERENCANAAN proyek. Pada langkah ini JANGAN menulis atau mengubah kode aplikasi.", "");
+      L.push("LANGKAH",
+        "1. Baca AGENTS.md, SPEC.md, TASKS.md, dan HANDOFF.md.",
+        "2. Periksa apakah fitur ini bertabrakan dengan spek atau tugas yang sudah ada. Kalau ya, jelaskan dan tanya aku sebelum mengubah apa pun.",
+        "3. Perbarui SPEC.md: tambahkan hanya bagian yang perlu (layar, data, atau aturan) dan catat di \"Riwayat perubahan spek\" (tanggal dan ringkasan).",
+        "4. Tambahkan tugas baru ke TASKS.md dengan format yang sama, nomor melanjutkan tugas terakhir, masing-masing dengan \"Hasil\" dan \"Cara cek\" berupa langkah klik awam.",
+        "5. Jangan mengubah, menghapus, atau mengurutkan ulang tugas yang sudah selesai ([x]).",
+        "6. Catat keputusan baru di HANDOFF.md.",
+        "7. Setelah itu BERHENTI. Tampilkan ringkasan perubahan (maksimal 6 baris) dan tunggu aku berkata \"lanjut\".", "");
+      L.push("FITUR BARU", `- Nama: ${val("featName")}`, `- Yang harus bisa dilakukan: ${lines(val("featDesc")).join(" ")}`, `- Dampak ke data: ${state.featImpact}`, `- Posisi di daftar tugas: ${state.featWhere}`, "");
+      L.push("ATURAN", "- Cakupan sekecil mungkin, hanya yang diminta. Kalau perlu dipecah, pecah jadi beberapa tugas kecil.");
+      L.push(lite() ? "- Satu tugas = satu hasil yang bisa dites." : "- Satu tugas boleh mencakup satu fitur utuh.");
+      if (String(state.featImpact).startsWith("Menambah")) {
+        L.push(db()
+          ? "- Perubahan skema ditulis sebagai file migrasi SQL BARU di folder database/ (jangan mengubah schema.sql lama diam-diam), termasuk Row Level Security untuk tabel atau kolom baru, dan satu tugas bertanda [MANUAL] agar aku yang menjalankannya."
+          : "- Tulis cara memindahkan data lama di browser ke bentuk baru, atau jelaskan bahwa data lama perlu dibersihkan, dan sertakan tugas ekspor cadangan sebelum perubahan.");
+      }
+      if (String(state.featImpact).startsWith("Mengubah")) L.push("- Sebutkan bagian SPEC.md dan tugas yang terdampak, dan jangan menyentuh hal lain.");
+      return [{ name: "PROMPT_FITUR.txt", content: L.join("\n") }];
+    }
+
+    /* -------------------------------------------------------------------
+       PEMERIKSA KONSISTENSI (tidak memblokir, hanya memperingatkan)
+       ------------------------------------------------------------------- */
+    function checkConcept() {
+      const w = [], ents = entList(), multi = !String(state.devices).startsWith("Satu");
+      const screens = state.screens || [], feats = state.feats || [];
+      if (!db() && multi) w.push(`Aplikasi dipakai ${String(state.devices).toLowerCase()}, tapi data hanya tersimpan di satu browser dan tidak ikut berpindah. Pilih Database online, atau ubah menjadi Satu perangkat saja.`);
+      if (!db() && !String(state.login).startsWith("Tanpa")) w.push("Login tanpa server hanya tampilan. Siapa pun yang membuka alat pengembang browser bisa melewatinya. Jangan dipakai untuk melindungi data penting.");
+      if (!db() && !String(state.sens).startsWith("Tidak")) w.push("Data yang cukup sensitif akan tersimpan di browser tanpa enkripsi. Pertimbangkan Database online dengan login, atau jangan simpan data sensitifnya.");
+      if (db() && String(state.login).startsWith("Tanpa") && String(state.devices).startsWith("Banyak")) w.push("Database online tanpa login dan dipakai banyak orang: siapa pun yang punya alamat aplikasi bisa membaca atau mengubah data. Tambahkan login, atau pastikan datanya memang publik.");
+      if (String(state.login).startsWith("Tanpa") && screens.includes("Login")) w.push("Layar Login dipilih, tapi pengaturan login adalah Tanpa login. Pilih salah satu.");
+      if (!String(state.login).startsWith("Tanpa") && !screens.includes("Login")) w.push("Login diaktifkan tapi layar Login belum dipilih. Tugas login tetap dibuat, tapi cek apakah itu yang kamu mau.");
+      if (ents.length > 5) w.push(`Ada ${ents.length} data (entitas). Untuk versi pertama, lima atau kurang jauh lebih aman. Sisanya bisa ditambah lewat tahap Tambah fitur.`);
+      ents.forEach((e) => { if (!splitCols(e.cols).length) w.push(`Data "${esc(e.name.trim())}" belum punya kolom. Agent akan diminta mengusulkan, tapi hasilnya lebih baik kalau kamu isi sendiri.`); });
+      const names = ents.map((e) => e.name.trim().toLowerCase());
+      if (new Set(names).size !== names.length) w.push("Ada nama data yang kembar. Tiap data harus punya nama unik.");
+      if (feats.includes("Upload file") && !db()) w.push("Upload file ke penyimpanan browser cepat penuh (batasnya hanya beberapa MB). Cocok hanya untuk file kecil.");
+      if (feats.includes("Pengingat")) w.push("Pengingat hanya muncul saat aplikasi sedang terbuka. Notifikasi yang masuk saat aplikasi tertutup butuh server.");
+      if (stackKind() === "react" && lite()) w.push("React dengan Vite untuk model ringan lebih rawan salah dan butuh langkah build. Satu file HTML biasanya lebih aman untuk pemula.");
+      if (stackKind() === "single" && ents.length > 3 && screens.length > 5) w.push("Banyak data dan layar dalam satu file HTML akan membuat file sangat panjang dan sulit diedit agent. Pertimbangkan Beberapa file tanpa build.");
+      if (String(state.hosting).startsWith("Dibuka") && multi) w.push("Aplikasi dibuka dari file, tapi akan dipakai lebih dari satu perangkat atau orang. Perlu hosting supaya bisa diakses bersama.");
+      if (lines(val("flow")).length < 3 && val("flow")) w.push("Alur utama kurang dari 3 langkah. Rincikan supaya cara cek tiap tugas lebih jelas.");
+      return w;
+    }
+
+    function checkPack() {
+      const w = checkConcept(), raw = val("specPaste");
+      if (!raw) {
+        w.unshift("Rumusan AI masih kosong, jadi paket dibuat langsung dari isian form dan hasilnya lebih kasar. Disarankan jalankan tahap Rumuskan dulu, lalu tempel jawabannya di sini.");
+        return w;
+      }
+      const ai = parseSpec(raw), missing = [1, 2, 3, 4, 5, 6, 7, 8].filter((n) => !ai.sections[n]);
+      if (!ai.found.length) {
+        w.unshift("Teks rumusan AI tidak terbaca. Judul bernomor (## 1. RINGKASAN sampai ## 8. ASUMSI) tidak ditemukan, jadi paket dibuat dari isian form.");
+        return w;
+      }
+      if (missing.length) w.unshift(`Rumusan AI belum memuat bagian ${missing.join(", ")}. Bagian itu dibuat dari isian form (daftar tugas dibuat sebagai tugas bawaan).`);
+      const tasks = parseTasks(ai.sections[7]);
+      if (ai.sections[7] && !tasks.length) w.push("Bagian 7 tidak terbaca sebagai daftar tugas (format yang diminta: T1 | judul | hasil | cara cek). Tugas dibuat sebagai tugas bawaan.");
+      if (tasks.length) {
+        const noCheck = tasks.filter((t) => !t.check).length;
+        if (noCheck) w.push(`${noCheck} tugas dari AI belum punya cara cek. Di TASKS.md ditandai ${NEED}, lengkapi sebelum dikerjakan.`);
+        if (tasks.length > 16) w.push(`AI membuat ${tasks.length} tugas. Itu banyak untuk jatah gratis. Pertimbangkan memangkas cakupan.`);
+        if (tasks.length < 3) w.push("Daftar tugas dari AI sangat pendek. Pastikan tiap tugas tidak terlalu besar.");
+      }
+      const low = raw.toLowerCase();
+      entList().forEach((e) => { if (!low.includes(e.name.trim().toLowerCase())) w.push(`Data "${esc(e.name.trim())}" dari formmu tidak disebut di rumusan AI. Periksa apakah ada yang hilang.`); });
+      if (db() && !/rls|row level/i.test(raw)) w.push("Rumusan AI tidak menyebut keamanan database (Row Level Security) padahal memakai Supabase. Minta AI melengkapinya.");
+      if (db() && !/\[manual\]/i.test(ai.sections[7] || "")) w.push("Tidak ada tugas bertanda [MANUAL] untuk langkah yang harus kamu kerjakan di Supabase.");
+      return w;
+    }
+
+    function checkFeature() {
+      const w = [];
+      if (String(state.featImpact).startsWith("Menambah") && db()) w.push("Perubahan skema database butuh langkah manual: kamu harus menjalankan SQL baru di Supabase.");
+      if (String(state.featImpact).startsWith("Menambah") && !db()) w.push("Data lama yang sudah tersimpan di browser bisa tidak cocok dengan bentuk baru. Ekspor cadangan dulu.");
+      return w;
+    }
+
+    /* -------------------------------------------------------------------
+       DAFTAR TAHAP. Mau menambah tahap baru? Tambah satu entri di sini,
+       tombolnya muncul sendiri.
+       ------------------------------------------------------------------- */
+    const MODES = {
+      idea: {
+        label: "RUMUSKAN", go: "Buat prompt rumusan",
+        hint: "Langkah 1. Isi konsepnya, lalu salin prompt hasilnya ke ChatGPT, Claude, atau Gemini supaya dirumuskan menjadi spek dan daftar tugas.",
+        sections: () => SECTIONS_CONCEPT,
+        missing: () => conceptMissing(), check: checkConcept, build: buildIdea
+      },
+      pack: {
+        label: "RAKIT PAKET", go: "Rakit paket proyek",
+        hint: "Langkah 2. Tempel jawaban AI dari langkah 1 (boleh dikosongkan), lalu rakit paket file untuk agent dan unduh sebagai .zip.",
+        sections: () => SECTIONS_CONCEPT.concat([SECTION_SPEC]),
+        missing: () => conceptMissing(), check: checkPack, build: buildPack
+      },
+      feature: {
+        label: "TAMBAH FITUR", go: "Buat prompt fitur",
+        hint: "Setelah proyek berjalan. Menambah fitur lewat spek dan daftar tugas, bukan langsung ke kode, supaya catatan proyek tetap utuh.",
+        sections: () => SECTIONS_FEATURE,
+        missing: () => [["featName", "nama fitur"], ["featDesc", "deskripsi fitur"]].filter(([id]) => !val(id)).map((x) => x[1]),
+        check: checkFeature, build: buildFeature
+      }
+    };
+    function conceptMissing() {
+      const m = [["appName", "nama aplikasi"], ["mainUser", "pengguna utama"], ["problem", "masalah yang diselesaikan"], ["flow", "alur utama"]]
+        .filter(([id]) => !val(id)).map((x) => x[1]);
+      if (!entList().length) m.push("minimal satu data (nama dan kolomnya)");
+      return m;
+    }
+
+    // ---------- pilih tahap ----------
+    function buildModeSelector() {
+      const keys = Object.keys(MODES);
+      $("modeSelector").insertAdjacentHTML("beforeend",
+        keys.map((k) => `<button class="type-btn" type="button" data-mode="${k}">${MODES[k].label}</button>`).join(""));
+      $("modeSelector").querySelectorAll("[data-mode]").forEach((b) => b.addEventListener("click", () => setMode(b.dataset.mode)));
+      $("indicatorMode").style.width = `calc((100% - 8px) / ${keys.length})`;
+    }
+    function setMode(m, force) {
+      if (!force && m === state.mode) return;
+      if (!MODES[m]) m = "idea";
+      state.mode = m;
+      $("indicatorMode").style.transform = `translateX(${Object.keys(MODES).indexOf(m) * 100}%)`;
+      document.querySelectorAll("[data-mode]").forEach((b) => b.classList.toggle("active", b.dataset.mode === m));
+      $("modeHint").textContent = MODES[m].hint;
+      $("go").textContent = MODES[m].go;
+      $("msg").textContent = "";
+      $("warn").innerHTML = "";
+      showOutput([]);
+      renderForm();
+      saveState();
+    }
+
+    // ---------- hasil: tab berkas, salin, unduh ----------
+    let outFiles = [], activeFile = "";
+    function showOutput(files) {
+      outFiles = files;
+      activeFile = files.length ? files[0].name : "";
+      renderOutput();
+    }
+    function renderOutput() {
+      $("fileTabs").innerHTML = outFiles.length > 1
+        ? outFiles.map((f) => `<button type="button" class="file-tab" role="tab" aria-pressed="${f.name === activeFile}" data-file="${attr(f.name)}">${esc(f.name)}</button>`).join("") : "";
+      const cur = outFiles.find((f) => f.name === activeFile);
+      $("out").textContent = cur ? cur.content : PLACEHOLDER;
+      $("zip").hidden = state.mode !== "pack" || !outFiles.length;
+    }
+    $("fileTabs").addEventListener("click", (e) => {
+      const b = e.target.closest(".file-tab");
+      if (!b) return;
+      activeFile = b.dataset.file;
+      renderOutput();
+    });
+
+    function flash(btn, text) {
+      const old = btn.dataset.label || btn.textContent;
+      btn.dataset.label = old;
+      btn.textContent = text;
+      setTimeout(() => (btn.textContent = old), 2200);
+    }
+    $("go").addEventListener("click", () => {
+      const mode = MODES[state.mode], empty = mode.missing();
+      if (empty.length) { $("msg").textContent = PERSONAS[state.persona].missing(empty.join(", ")); return; }
+      $("msg").textContent = "";
+      const warns = mode.check();
+      $("warn").innerHTML = warns.length ? `${PERSONAS[state.persona].warnHead}<ul>${warns.map((x) => `<li>${x}</li>`).join("")}</ul>` : "";
+      showOutput(mode.build());
+      showTab("result");
+    });
+    $("copy").addEventListener("click", async () => {
+      const btn = $("copy");
+      try {
+        await navigator.clipboard.writeText($("out").textContent);
+        flash(btn, PERSONAS[state.persona].copied);
+      } catch (e) {
+        const r = document.createRange(); r.selectNodeContents($("out"));
+        const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+        flash(btn, "Teks terpilih, tekan Ctrl+C");
+      }
+    });
+
+    /* -------------------------------------------------------------------
+       PEMBUAT ZIP (tanpa pustaka luar, jadi jalan tanpa internet)
+       Metode "stored" (tanpa kompresi), cukup untuk file teks kecil.
+       ------------------------------------------------------------------- */
+    function makeZip(files) {
+      const enc = new TextEncoder();
+      const table = new Uint32Array(256);
+      for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1); table[n] = c >>> 0; }
+      const crc32 = (b) => { let c = 0xFFFFFFFF; for (let i = 0; i < b.length; i++) c = table[(c ^ b[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; };
+      const d = new Date();
+      const time = (d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1);
+      const date = ((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate();
+      const parts = [], central = [];
+      let offset = 0;
+      files.forEach((f) => {
+        const name = enc.encode(f.name), data = enc.encode(f.content), crc = crc32(data);
+        const lh = new DataView(new ArrayBuffer(30));
+        lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true); lh.setUint16(8, 0, true);
+        lh.setUint16(10, time, true); lh.setUint16(12, date, true); lh.setUint32(14, crc, true);
+        lh.setUint32(18, data.length, true); lh.setUint32(22, data.length, true);
+        lh.setUint16(26, name.length, true); lh.setUint16(28, 0, true);
+        parts.push(new Uint8Array(lh.buffer), name, data);
+        const ch = new DataView(new ArrayBuffer(46));
+        ch.setUint32(0, 0x02014b50, true); ch.setUint16(4, 20, true); ch.setUint16(6, 20, true); ch.setUint16(8, 0x0800, true); ch.setUint16(10, 0, true);
+        ch.setUint16(12, time, true); ch.setUint16(14, date, true); ch.setUint32(16, crc, true);
+        ch.setUint32(20, data.length, true); ch.setUint32(24, data.length, true); ch.setUint16(28, name.length, true);
+        ch.setUint16(30, 0, true); ch.setUint16(32, 0, true); ch.setUint16(34, 0, true); ch.setUint16(36, 0, true);
+        ch.setUint32(38, 0, true); ch.setUint32(42, offset, true);
+        central.push(new Uint8Array(ch.buffer), name);
+        offset += 30 + name.length + data.length;
+      });
+      const cdSize = central.reduce((s, p) => s + p.length, 0);
+      const end = new DataView(new ArrayBuffer(22));
+      end.setUint32(0, 0x06054b50, true); end.setUint16(8, files.length, true); end.setUint16(10, files.length, true);
+      end.setUint32(12, cdSize, true); end.setUint32(16, offset, true);
+      return new Blob([...parts, ...central, new Uint8Array(end.buffer)], { type: "application/zip" });
+    }
+    function download(blob, name) {
+      const url = URL.createObjectURL(blob), a = document.createElement("a");
+      a.href = url; a.download = name;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1500);
+    }
+    $("zip").addEventListener("click", () => {
+      const folder = slug(val("appName"));
+      download(makeZip(outFiles.map((f) => ({ name: `${folder}/${f.name}`, content: f.content }))), `${folder}.zip`);
+      flash($("zip"), PERSONAS[state.persona].zipped);
+    });
+
+    // ---------- simpan, buka, dan kosongkan proyek ----------
+    $("saveProj").addEventListener("click", () => {
+      download(new Blob([JSON.stringify({ app: "neura-incepta", v: 1, state }, null, 2)], { type: "application/json" }), `neura-incepta-${slug(val("appName"))}.json`);
+      flash($("saveProj"), PERSONAS[state.persona].saved);
+    });
+    $("loadProj").addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const r = new FileReader();
+      r.onload = () => {
+        try {
+          const data = JSON.parse(r.result);
+          if (data.app !== "neura-incepta" || !data.state) throw new Error("bukan file proyek");
+          Object.keys(state).forEach((k) => delete state[k]);
+          Object.assign(state, defaults(), data.state);
+          if (!Array.isArray(state.entities) || !state.entities.length) state.entities = [{ name: "", cols: "" }];
+          saveState();
+          setPersona(state.persona, false);
+          setMode(state.mode, true);
+          flash($("loadProjLabel"), PERSONAS[state.persona].loaded);
+        } catch (err) {
+          flash($("loadProjLabel"), PERSONAS[state.persona].loadFail);
+        }
+      };
+      r.readAsText(file);
+      e.target.value = "";
+    });
+    $("reset").addEventListener("click", () => {
+      try { localStorage.removeItem(STORE_KEY); } catch (e) {}
+      location.reload();
+    });
+
+    /* ===================================================================
+       BAGIAN 3: TEMA DAN EFEK (disalin dari Neura)
+       =================================================================== */
+    const getBase = () => document.documentElement.getAttribute("data-base");
+    const getAccent = () => document.documentElement.getAttribute("data-accent");
+    const cssVar = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    const getPalette = () => [cssVar("--accent-primary"), cssVar("--accent-bright"), cssVar("--accent-secondary"), cssVar("--accent-particle")];
+
+    function setTheme(base, accent) {
+      document.documentElement.setAttribute("data-base", base);
+      document.documentElement.setAttribute("data-accent", accent);
+      try {
+        localStorage.setItem("neura-theme-base", base);
+        localStorage.setItem("neura-theme-accent", accent);
+      } catch (e) {}
+      refreshTriangles();
+      document.querySelectorAll("[data-base-opt]").forEach((b) => b.classList.toggle("active", b.dataset.baseOpt === base));
+      document.querySelectorAll("[data-accent-opt]").forEach((b) => b.classList.toggle("active", b.dataset.accentOpt === accent));
+    }
+
+    $("themeBtn").addEventListener("click", (e) => { e.stopPropagation(); $("themePopup").classList.toggle("open"); });
+    $("themePopup").addEventListener("click", (e) => {
+      e.stopPropagation();
+      const b = e.target.closest("button");
+      if (!b) return;
+      if (b.dataset.baseOpt) setTheme(b.dataset.baseOpt, getAccent());
+      if (b.dataset.accentOpt) setTheme(getBase(), b.dataset.accentOpt);
+    });
+    document.addEventListener("click", () => $("themePopup").classList.remove("open"));
+
+    // segitiga ambient di header
+    const triangles = [];
+    function makeTriangles() {
+      for (let i = 0; i < 8; i++) {
+        const el = document.createElement("div");
+        const size = 14 + Math.random() * 22;
+        el.className = "triangle";
+        el.style.cssText = `width:${size}px;height:${size}px;left:${Math.random() * 90}%;top:${Math.random() * 70}%;animation-delay:${-Math.random() * 6}s`;
+        $("header").appendChild(el);
+        triangles.push({ el, idx: i % 4 });
+      }
+      refreshTriangles();
+    }
+    function refreshTriangles() {
+      const palette = getPalette();
+      triangles.forEach((t) => (t.el.style.background = palette[t.idx]));
+    }
+
+    // partikel saat klik
+    document.addEventListener("click", (e) => {
+      if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      const palette = getPalette();
+      for (let i = 0; i < 5; i++) {
+        const p = document.createElement("div");
+        const size = 5 + Math.random() * 15;
+        p.className = "click-particle";
+        p.style.cssText = `width:${size}px;height:${size}px;left:${e.pageX}px;top:${e.pageY}px;background:${palette[Math.floor(Math.random() * palette.length)]}`;
+        document.body.appendChild(p);
+        p.animate([
+          { transform: "translate(0,0) scale(1) rotate(0deg)", opacity: 1 },
+          { transform: `translate(${Math.random() * 100 - 50}px,${Math.random() * 100 - 50}px) scale(0) rotate(360deg)`, opacity: 0 }
+        ], { duration: 500 });
+        setTimeout(() => p.remove(), 500);
+      }
+    });
+
+    /* ---------- START ---------- */
+    makeTriangles();
+    setTheme(getBase(), getAccent());
+    buildModeSelector();
+    setPersona(state.persona, false);
+    setMode(state.mode, true);
+  </script>
+</body>
+</html>
